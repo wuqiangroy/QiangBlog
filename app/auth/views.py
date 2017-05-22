@@ -17,3 +17,6 @@ class Login(BaseView):
         form = LoginForm(request.args)
         if not form.validate():
             return 0
+
+
+
