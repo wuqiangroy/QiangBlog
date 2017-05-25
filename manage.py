@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 # _*_ coding:utf-8 _*_
 
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from app import create_app, db
 
-app = Flask(__name__)
-db = SQLAlchemy(app)
+app = create_app()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=12300)

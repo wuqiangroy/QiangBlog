@@ -2,6 +2,7 @@
 # _*_ coding:utf-8 _*_
 
 """using postgresql"""
+from datetime import datetime
 
 from ..manage import db
 
@@ -14,3 +15,4 @@ class User(db.Model):
     email = db.Column(db.String, primary_key=True, unique=True)
     password = db.Column(db.String)
     invitation_code = db.Column(db.String, unique=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
