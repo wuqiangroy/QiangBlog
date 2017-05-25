@@ -3,6 +3,7 @@
 
 from flask import request, jsonify
 
+from app.models import User
 from .util import hash_password
 from .form import LoginForm, RegisterForm
 
@@ -18,6 +19,8 @@ class Login(BaseView):
         form = LoginForm(request.args)
         if not form.validate():
             return 0
+        username = form.username.data
+        user = User.query.filter_by(username=username).first()
 
 
 class Register(BaseView):
