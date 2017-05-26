@@ -16,7 +16,8 @@ class User(db.Model):
     username = db.Column(db.String(50), primary_key=True, unique=True)
     email = db.Column(db.String, primary_key=True, unique=True)
     password = db.Column(db.String)
-    invitation_code = db.Column(db.String, unique=True)
+    invitation = db.Column(db.String, unique=True)
+    code = db.Column(db.String)
     permission = db.Column(db.Integer)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -33,7 +34,7 @@ class Post(db.Model):
     title = db.Column(db.String, primary_key=True, unique=True)
     content = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    comments = db.Column(db.text)
+    comments = db.Column(db.Text)
 
 
 class InviteCode(db.Model):
@@ -42,4 +43,4 @@ class InviteCode(db.Model):
     __tablename__ = "invitecode"
 
     id = db.Column(db.Integer, primary_key=True)
-    invitation_code = db.Column(db.String, primary_key=True, unique=True)
+    invitation = db.Column(db.String, primary_key=True, unique=True)
