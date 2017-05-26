@@ -13,6 +13,6 @@ def create_app():
     db.init_app(app)
 
     from .auth import auth
-    app.register_blueprint(auth, url_prefix="/auth")
+    app.register_blueprint(auth)
 
     return app
