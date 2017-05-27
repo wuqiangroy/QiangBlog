@@ -64,11 +64,18 @@ class ChangeEmailForm(Form):
             raise ValidationError("邮箱已注册！")
 
 
+class SendCodeForm(Form):
+    """发送验证码"""
+
+    username = StringField("用户名", validators=[required()])
+    email = StringField("邮箱", validators=[required(), Email()])
+    submit = SubmitField("提交")
+
+
 class ResetPassword(Form):
     """重置密码"""
 
     username = StringField("用户名", validators=[required()])
-    email = StringField("邮箱", validators=[required(), Email()])
     code = StringField("确认码", validators=[required()])
     password = PasswordField("新密码", validators=[required()])
     submit = SubmitField("提交")

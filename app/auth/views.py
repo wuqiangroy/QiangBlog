@@ -9,7 +9,7 @@ from app.models import User, InviteCode
 from app.util import send_mail
 from . import auth
 from .form import LoginForm, RegisterForm, ChangePasswordForm, ChangeEmailForm, \
-    ResetPassword
+    ResetPassword, SendCodeForm
 
 
 @auth.route("/login", methods=["get", "post"])
@@ -98,13 +98,31 @@ def change_email():
     return render_template("auth/change_email.html", form=form)
 
 
-@auth.route("/reset/password", methods=["get", 'post'])
+@auth.route("/reset/password/sendcode", methods=["get", 'post'])
+def send_code():
+    """发送验证码"""
+
+    form = SendCodeForm()
+    if form.validate():
+        user = User.query.filter_by(username=form.username.data).fiest()
+        if user and user.email == form.email.data:
+            send_mail(receiver=form.email.data)
+        flash("一封邮件已经发送至{}， 请复制并填写到重置密码的验证码中。")
+        return redirect(url_for("reset_password"))
+    return render_template("auth/send_code.html", form=form)
+
+
+@auth.route("/reset/password", methods=["get", "post"])
 def reset_password():
     """重置密码"""
 
     form = ResetPassword()
     if form.validate():
-        user = User.query.filter_by(username=form.username.data).fiest()
-        if user and user.email == form.email.data:
-            send_mail()
-
+        user = User.query.filter_by(username=form.username.data).first()
+        if user and user.code == form.code.data:
+            user.password = form.password.data
+            db.session.add(user)
+            db.session.commit()
+            return redirect(url_for("login"))
+        flash("验证码错误！")
+    return render_template("auth/reset_password.html", form=form)

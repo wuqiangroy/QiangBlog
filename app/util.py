@@ -15,9 +15,9 @@ def create_invitation_code():
     return str(uuid.uuid1()).replace("-", "")
 
 
-def send_mail():
+def send_mail(receiver):
     """发送邮件, 并将code存进User表"""
-    
+
     code = general_code()
     user = User(
         code=code
