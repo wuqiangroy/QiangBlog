@@ -6,7 +6,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 
 from app import db
 from app.models import User, InviteCode
-from app.util import hash_password, send_mail
+from app.util import send_mail
 from . import auth
 from .form import LoginForm, RegisterForm, ChangePasswordForm, ChangeEmailForm, \
     ResetPassword
@@ -19,7 +19,7 @@ def login():
     form = LoginForm()
     if form.validate():
         username = form.username.data
-        password = hash_password(form.password.data)
+        password = form.password.data
         user = User.query.filter_by(username=username).first()
         if user and user.verify_password(password):
             login_user(user, form.remember_me.data)
@@ -42,7 +42,7 @@ def register():
             user = User(
                 username=form.username.data,
                 email=form.email.data,
-                password=hash_password(form.password.data),
+                password=form.password.data,
                 invitation=invitation
                 )
             db.session.delete(code)
@@ -71,7 +71,7 @@ def change_password():
     form = ChangePasswordForm()
     if form.validate():
         if current_user.verify_password(form.password.data):
-            current_user.password = hash_password(form.new_password.data)
+            current_user.password = form.new_password.data
             db.session.add(current_user)
             db.session.commit()
             flash("密码已修改")

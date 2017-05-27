@@ -6,13 +6,6 @@ import hashlib
 import random
 
 
-def hash_password(param):
-    """hash密码"""
-
-    param = str(param)
-    return hashlib.md5(param.encode()).hexdigest()
-
-
 def create_invitation_code():
     """邀请码生成"""
 
