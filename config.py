@@ -28,13 +28,13 @@ class Development(Config):
     """开发配置"""
 
     DEBUG = True
-    POSTGRESQL_URL = "postgresql://dbuser:password@localhost/dev_qiangblog"
+    SQLALCHEMY_DATABASE_URI = "postgresql://dbuser:password@localhost/dev_qiangblog"
 
 
 class Production(Config):
     """线上配置"""
 
-    POSTGRESQL_URL = "postgresql://dbuser:password@localhost/pro_qiangblog"
+    SQLALCHEMY_DATABASE_URI = "postgresql://dbuser:password@localhost/pro_qiangblog"
 
 Config = {
     "development": Development,
