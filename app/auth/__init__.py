@@ -4,6 +4,7 @@
 """所有用戶方面在此處理"""
 
 from flask import Blueprint
-from . import views
 
 auth = Blueprint("auth", __name__)
+
+from . import views

@@ -5,11 +5,11 @@
 ## 后端  
 #### Flask  
 ## 数据库  
-#### mongodb  
+#### postgresql
 ## 缓存  
 #### redis（如果有必要）
-## 前段  
-#### Vue  
+## 前端
+#### bootstrap
 
 ## 特点
 #### 个人发表博客  
