@@ -10,7 +10,10 @@ class Config():
     """基础配置"""
 
     SECRET_KEY = os.environ.get("SECRET_KEY") or "coding change world"
+    SSL_DISABLE = False
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_RECORD_QUERIES = True
     MAIL_SUBJECT_PREFIX = ["QiangBlog"]
     MAIL_SENDER = "QiangBlog <wuqiangroy@live.com>"
     MAIL_SERVER = "smtp-mail.outlook.com"
