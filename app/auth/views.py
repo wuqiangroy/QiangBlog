@@ -53,8 +53,8 @@ def register():
     return render_template("auth/register.html", form=form)
 
 
-@login_required
 @auth.route("/logout")
+@login_required
 def logou():
     """退出登录"""
 
@@ -63,8 +63,8 @@ def logou():
     return redirect(url_for("main.index"))
 
 
-@login_required
 @auth.route("/change/password", methods=["GET", "POST"])
+@login_required
 def change_password():
     """更改密码"""
 
@@ -81,8 +81,8 @@ def change_password():
     return render_template("auth/change_password.html", form=form)
 
 
-@login_required
 @auth.route("/change/email", methods=["GET", "POST"])
+@login_required
 def change_email():
     """更改email"""
 
