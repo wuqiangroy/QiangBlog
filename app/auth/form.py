@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # _*_ coding:utf-8 _*_
 
-from wtforms import Form, StringField, BooleanField, SubmitField, PasswordField
+from flask_wtf import FlaskForm
+from wtforms import StringField, BooleanField, SubmitField, PasswordField
 from wtforms.validators import Regexp, required, Length, Email, EqualTo
 from wtforms import ValidationError
 
 from app.models import User
 
 
-class LoginForm(Form):
+class LoginForm(FlaskForm):
     """登录表单"""
 
     username = StringField("用户名", validators=[required()])
@@ -17,7 +18,7 @@ class LoginForm(Form):
     submit = SubmitField("登录")
 
 
-class RegisterForm(Form):
+class RegisterForm(FlaskForm):
     """注冊表单"""
 
     username = StringField("用户名", validators=[
@@ -41,7 +42,7 @@ class RegisterForm(Form):
             raise ValidationError("邮箱已注册！")
 
 
-class ChangePasswordForm(Form):
+class ChangePasswordForm(FlaskForm):
     """更改密码表单"""
 
     password = PasswordField("原始密码", validators=[required()])
@@ -52,7 +53,7 @@ class ChangePasswordForm(Form):
     submit = SubmitField("提交")
 
 
-class ChangeEmailForm(Form):
+class ChangeEmailForm(FlaskForm):
     """更改email表单"""
 
     password = PasswordField("密码", validators=[required()])
@@ -64,7 +65,7 @@ class ChangeEmailForm(Form):
             raise ValidationError("邮箱已注册！")
 
 
-class SendCodeForm(Form):
+class SendCodeForm(FlaskForm):
     """发送验证码"""
 
     username = StringField("用户名", validators=[required()])
@@ -72,7 +73,7 @@ class SendCodeForm(Form):
     submit = SubmitField("提交")
 
 
-class ResetPassword(Form):
+class ResetPassword(FlaskForm):
     """重置密码"""
 
     username = StringField("用户名", validators=[required()])
