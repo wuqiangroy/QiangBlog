@@ -12,12 +12,12 @@ from .form import LoginForm, RegisterForm, ChangePasswordForm, ChangeEmailForm, 
     ResetPassword, SendCodeForm
 
 
-@auth.route("/login", methods=["get", "post"])
+@auth.route("/login", methods=["GET", "POST"])
 def login():
     """登录"""
 
     form = LoginForm()
-    if form.validate():
+    if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
         user = User.query.filter_by(username=username).first()
@@ -28,12 +28,12 @@ def login():
     return render_template("auth/login.html", form=form)
 
 
-@auth.route("/register", methods=["get", "post"])
+@auth.route("/register", methods=["GET", "POST"])
 def register():
     """注册"""
 
     form = RegisterForm()
-    if form.validate():
+    if form.validate_on_submit():
         invitation = form.invitation.data
         code = InviteCode.query.filter_by(invitation=invitation).first()
         if not code:
@@ -64,12 +64,12 @@ def logou():
 
 
 @login_required
-@auth.route("/change/password", methods=["get", "post"])
+@auth.route("/change/password", methods=["GET", "POST"])
 def change_password():
     """更改密码"""
 
     form = ChangePasswordForm()
-    if form.validate():
+    if form.validate_on_submit():
         if current_user.verify_password(form.password.data):
             current_user.password = form.new_password.data
             db.session.add(current_user)
@@ -82,12 +82,12 @@ def change_password():
 
 
 @login_required
-@auth.route("/change/email", methods=["get", "post"])
+@auth.route("/change/email", methods=["GET", "POST"])
 def change_email():
     """更改email"""
 
     form = ChangeEmailForm()
-    if form.validate():
+    if form.validate_on_submit():
         if current_user.verify_password(form.password.data):
             current_user.email = form.email.data
             db.session.add(current_user)
@@ -98,12 +98,12 @@ def change_email():
     return render_template("auth/change_email.html", form=form)
 
 
-@auth.route("/reset/password/sendcode", methods=["get", 'post'])
+@auth.route("/reset/password/sendcode", methods=["GET", 'POST'])
 def send_code():
     """发送验证码"""
 
     form = SendCodeForm()
-    if form.validate():
+    if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).fiest()
         if user and user.email == form.email.data:
             send_mail(receiver=form.email.data)
@@ -112,12 +112,12 @@ def send_code():
     return render_template("auth/send_code.html", form=form)
 
 
-@auth.route("/reset/password", methods=["get", "post"])
+@auth.route("/reset/password", methods=["GET", "POST"])
 def reset_password():
     """重置密码"""
 
     form = ResetPassword()
-    if form.validate():
+    if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user and user.code == form.code.data:
             user.password = form.password.data

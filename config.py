@@ -6,7 +6,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-class Config():
+class Config:
     """基础配置"""
 
     SECRET_KEY = os.environ.get("SECRET_KEY") or "coding change world"
