@@ -12,12 +12,12 @@ class Config():
     SECRET_KEY = os.environ.get("SECRET_KEY") or "coding change world"
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     MAIL_SUBJECT_PREFIX = ["QiangBlog"]
-    MAIL_SENDER = "wuqiangroy@live.com"
-    MAIL_SERVER = "smtp.live.com"
+    MAIL_SENDER = "QiangBlog <wuqiangroy@live.com>"
+    MAIL_SERVER = "smtp-mail.outlook.com"
     MAIL_PORT = 587
-    MAIL_USE_SSL = True
+    MAIL_USE_TLS = True
     MAIL_USERNAME = "wuqiangroy@live.com"
-    MAIL_PASSWORD = os.environ.get("PASSWORD")
+    MAIL_PASSWORD = os.environ.get("password")
 
     @staticmethod
     def init_app(app):
