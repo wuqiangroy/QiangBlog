@@ -65,3 +65,17 @@ class ProfileAdminForm(FlaskForm):
     def valid_phone(self, field):
         if not field.data.startswith("1"):
             raise ValidationError("手机号有误")
+
+
+class PostForm(FlaskForm):
+    """文章"""
+
+    title = StringField("标题", validators=[DataRequired()])
+    content = TextAreaField("正文", validators=[DataRequired()])
+    submit = SubmitField("提交")
+
+
+class CommentForm(FlaskForm):
+    """评论"""
+
+

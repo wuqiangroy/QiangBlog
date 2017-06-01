@@ -3,6 +3,8 @@
 
 """using postgresql"""
 
+import bleach
+from markdown import markdown
 from datetime import datetime
 from flask_login import UserMixin, AnonymousUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -79,6 +81,7 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"))
     invite_codes = db.relationship("InviteCode", backref="user", lazy="dynamic")
     posts = db.relationship("Post", backref="author", lazy="dynamic")
+    comments = db.relationship("Comment", backref="author", lazy="dynamic")
 
     @property
     def password(self):
@@ -100,9 +103,43 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, unique=True)
     content = db.Column(db.Text)
+    content_html = db.Column(db.Text)
+    disable = db.Column(db.Boolean, default=False)
     create_time = db.Column(db.DateTime, default=datetime.utcnow)
-    comments = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    comments = db.relationship("Comment", backref="post", lazy="dynamic")
+
+    @staticmethod
+    def change_body(target, value, oldvalue, initiator):
+        allowed_tags = ["a", "abbr", "acronym", "b", "blockquote", "code",
+                        "em", "i", "li", "ol", "pre", "strong", "ul",
+                        "h1", "h2", "h3", "p"]
+        target.text_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format="html"),
+            tags=allowed_tags, strip=True))
+
+
+class Comment(db.Model):
+    """评论， 和文章是多对一关系"""
+
+    __tablename__ = "comments"
+
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text)
+    text_html = db.Column(db.Text)
+    disable = db.Column(db.Boolean, default=False)
+    create_time = db.Column(db.DateTime(), default=datetime.utcnow)
+    post_id = db.Column(db.Integer, db.ForeignKey("posts.id"))
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+
+    @staticmethod
+    def change_body(target, value, oldvalue, initiator):
+        allowed_tags = ["a", "abbr", "acronym", "b", "blockquote", "code",
+                        "em", "i", "li", "ol", "pre", "strong", "ul",
+                        "h1", "h2", "h3", "p"]
+        target.text_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format="html"),
+            tags=allowed_tags, strip=True))
 
 
 class InviteCode(db.Model):
