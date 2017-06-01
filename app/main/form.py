@@ -20,7 +20,7 @@ class ProfileForm(FlaskForm):
     wechat = StringField("微信号", validators=[Length(0, 64)])
     weibo = StringField("微博账号", validators=[Length(0, 64)])
     about_me = TextAreaField("简介")
-    submit = SubmitField("提交")
+    submit = SubmitField("确认")
 
     def valid_phone(self, field):
         if not field.data.startswith("1"):
@@ -44,7 +44,7 @@ class ProfileAdminForm(FlaskForm):
     wechat = StringField("微信号", validators=[Length(0, 64)])
     weibo = StringField("微博账号", validators=[Length(0, 64)])
     about_me = TextAreaField("简介")
-    submit = SubmitField("提交")
+    submit = SubmitField("确认")
 
     def __init__(self, user, *args, **kwargs):
         super(ProfileAdminForm, self).__init__(*args, **kwargs)
@@ -72,10 +72,11 @@ class PostForm(FlaskForm):
 
     title = StringField("标题", validators=[DataRequired()])
     content = TextAreaField("正文", validators=[DataRequired()])
-    submit = SubmitField("提交")
+    submit = SubmitField("发布")
 
 
 class CommentForm(FlaskForm):
     """评论"""
 
-
+    body = TextAreaField("", validators=[DataRequired()])
+    submit = SubmitField("发布")

@@ -9,7 +9,7 @@ from app.models import User, InviteCode
 from app.util import send_mail
 from . import auth
 from .form import LoginForm, RegisterForm, ChangePasswordForm, ChangeEmailForm, \
-    ResetPassword, SendCodeForm
+    ResetPassword
 
 
 @auth.before_app_request
@@ -31,7 +31,7 @@ def unconfirmed():
 
     if current_user.is_anonymous or current_user.confirmed:
         return redirect(url_for("main.index"))
-    return redirect(url_for("auth/unconfirmed.html"))
+    return redirect("auth/unconfirmed.html")
 
 
 @auth.route("/login", methods=["GET", "POST"])
@@ -133,20 +133,6 @@ def change_email():
         else:
             flash("密码错误")
     return render_template("auth/change_email.html", form=form)
-
-
-@auth.route("/reset/password/sendcode", methods=["GET", 'POST'])
-def send_code():
-    """发送验证码"""
-
-    form = SendCodeForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).fiest()
-        if user and user.email == form.email.data:
-            send_mail(receiver=form.email.data)
-        flash("一封邮件已经发送至{}， 请复制并填写到重置密码的确认码中。".format(user.email))
-        return redirect(url_for("reset_password"))
-    return render_template("auth/send_code.html", form=form)
 
 
 @auth.route("/reset/password", methods=["GET", "POST"])

@@ -16,7 +16,7 @@ class LoginForm(FlaskForm):
         DataRequired(), Length(1, 64), Regexp("[A-Za-z][A-Za-z0-9_.]*$",
                                               message="用户名只能是字母、数字、点或下划线")
     ])
-    password = PasswordField("密碼", validators=[DataRequired()])
+    password = PasswordField("密码", validators=[DataRequired()])
     remember_me = BooleanField("记住我")
     submit = SubmitField("登录")
 
@@ -35,7 +35,7 @@ class RegisterForm(FlaskForm):
         DataRequired(), EqualTo("password2", message="两次密码不正确")
     ])
     password2 = PasswordField("再次输入密码", validators=[DataRequired()])
-    submit = SubmitField("提交")
+    submit = SubmitField("注册")
 
     def validate_username(self, field):
         if User.query.filter_by(username=field.data).first():
@@ -54,7 +54,7 @@ class ChangePasswordForm(FlaskForm):
         DataRequired(), EqualTo("new_password2", message="两次密码不匹配")
     ])
     new_password2 = PasswordField("再次输入新密码", validators=[DataRequired()])
-    submit = SubmitField("提交")
+    submit = SubmitField("确认更改")
 
 
 class ChangeEmailForm(FlaskForm):
@@ -63,22 +63,11 @@ class ChangeEmailForm(FlaskForm):
     password = PasswordField("密码", validators=[DataRequired()])
     email = StringField("新邮箱", validators=[DataRequired(), Email(),
                                            Length(1, 64)])
-    submit = SubmitField("提交")
+    submit = SubmitField("确认")
 
     def validation_email(self, field):
         if User.query.filter_by(email=field.data).first():
             raise ValidationError("邮箱已注册！")
-
-
-class SendCodeForm(FlaskForm):
-    """发送验证码"""
-
-    username = StringField("用户名", validators=[
-        DataRequired(), Length(1, 64), Regexp("[A-Za-z][A-Za-z0-9_.]*$",
-                                              message="用户名只能是字母、数字、点或下划线")
-    ])
-    email = StringField("邮箱", validators=[DataRequired(), Email()])
-    submit = SubmitField("提交")
 
 
 class ResetPassword(FlaskForm):
@@ -90,4 +79,4 @@ class ResetPassword(FlaskForm):
     ])
     code = StringField("确认码", validators=[DataRequired()])
     password = PasswordField("新密码", validators=[DataRequired()])
-    submit = SubmitField("提交")
+    submit = SubmitField("确认")
