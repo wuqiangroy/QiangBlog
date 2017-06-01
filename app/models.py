@@ -73,7 +73,8 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String)
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"))
-    invite_code = db.relationship("InviteCode", backref="invitecode", )
+    invite_codes = db.relationship("InviteCode", backref="user", lazy="dynamic")
+    posts = db.relationship("Post", backref="author", lazy="dynamic")
 
     @property
     def password(self):
@@ -93,10 +94,11 @@ class Post(db.Model):
     __tablename__ = "posts"
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String, primary_key=True, unique=True)
+    title = db.Column(db.String, unique=True)
     content = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    create_time = db.Column(db.DateTime, default=datetime.utcnow)
     comments = db.Column(db.Text)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
 
 class InviteCode(db.Model):
@@ -105,5 +107,5 @@ class InviteCode(db.Model):
     __tablename__ = "invitecodes"
 
     id = db.Column(db.Integer, primary_key=True)
-    invite_code = db.Column(db.String, primary_key=True, unique=True)
+    invite_code = db.Column(db.String, unique=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
