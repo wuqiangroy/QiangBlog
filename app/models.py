@@ -3,13 +3,17 @@
 
 """using postgresql"""
 
+import hashlib
 import bleach
 from markdown import markdown
 from datetime import datetime
+from flask import current_app, request, url_for
 from flask_login import UserMixin, AnonymousUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import JSONWebSignatureSerializer as Serializer
 
-from app import db
+from app import db, login_manager
+from config import Config
 
 
 class Permission:
@@ -65,7 +69,6 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String, unique=True, index=True)
     password_hash = db.Column(db.String)
     invitation_code = db.Column(db.String, unique=True)
-    code = db.Column(db.String)
     permissions = db.Column(db.Integer)
     confirmed = db.Column(db.Boolean, default=False)
     realname = db.Column(db.String, index=True)
@@ -93,6 +96,100 @@ class User(UserMixin, db.Model):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def can(self, permissions):
+        return self.role is not None and \
+               (self.role.permissions & permissions) == permissions
+
+    def is_administrator(self):
+        return self.can(Permission.ADMINISTER)
+
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        db.session.commit()
+
+    def gravatar(self, size=100, default="identicon", rating="g"):
+        if request.is_secure:
+            url = "https://secure.gravatar.com/avatar"
+        else:
+            url = "http://www.gravatar.com/avatar"
+        hash = self.avatar_hash or hashlib.md5(self.email.encode()).hexdigest()
+        return "{}/{}?s={}&d={}&r={}".format(url, hash, size, default, rating)
+
+    def generate_confirmatiom_token(self):
+        """生成邮箱确认token"""
+
+        s = Serializer(Config.SECRET_KEY)
+        return s.dumps({"confirm": self.id})
+
+    def confirm(self, token):
+        """
+        验证token
+        token通过即将confirmed设置为True
+        """
+
+        s = Serializer(Config.SECRET_KEY)
+        try:
+            data = s.load(token)
+        except:
+            return False
+        if data.get("confime") != self.id:
+            return False
+        self.confirmed = True
+        db.session.add(self)
+        db.session.commit()
+        return True
+
+    def generate_reset_token(self):
+        """生成重置密码所需token"""
+
+        s = Serializer(Config.SECRET_KEY)
+        return s.dumps({"reset": self.id})
+
+    def reset_password(self, token, new_password):
+        """重置密码"""
+
+        s = Serializer(Config.SECRET_KEY)
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        if data.get("reset") != self.id:
+            return False
+        self.password = new_password
+        db.session.add(self)
+        db.session.commit()
+        return True
+
+    def generate_change_email_token(self, new_email):
+        """生成更改邮箱所需token"""
+
+        s = Serializer(Config.SECRET_KEY)
+        return s.dumps({
+            "change_email": self.id,
+            "new_email": new_email
+        })
+
+    def change_email(self, token):
+        """验证token，更改email"""
+
+        s = Serializer(Config.SECRET_KEY)
+        try:
+            data = s.loads(token)
+        except:
+            return False
+        if data.get("change_email") != self.id:
+            return False
+        new_email = data.get("new_email")
+        if new_email is None:
+            return False
+        if self.query.filter_by(email=new_email).first():
+            return False
+        self.email = new_email
+        self.avatar_hash = hashlib.md5(self.email.encode()).hexdigest()
+        db.session.add(self)
+        db.session.commit()
+        return True
 
 
 class Post(db.Model):
@@ -150,3 +247,15 @@ class InviteCode(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     invite_code = db.Column(db.String, unique=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+
+
+class AnonymousUser(AnonymousUserMixin):
+    """匿名用户"""
+
+    def can(self, permission):
+        return False
+
+    def is_administrator(self):
+        return False
+
+login_manager.anonymous_user = AnonymousUser
