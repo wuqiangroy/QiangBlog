@@ -23,7 +23,7 @@ class RegisterForm(FlaskForm):
 
     username = StringField("用户名", validators=[
         DataRequired(), Length(1, 64), Regexp("[A-Za-z][A-Za-z0-9_.]*$",
-                                          message="用户名只能是字母、数字、点或下划线")
+                                              message="用户名只能是字母、数字、点或下划线")
     ])
     email = StringField("邮箱", validators=[DataRequired(), Email()])
     invitation = StringField("请输入邀请码", validators=[DataRequired()])
