@@ -107,7 +107,7 @@ def send_code():
         user = User.query.filter_by(username=form.username.data).fiest()
         if user and user.email == form.email.data:
             send_mail(receiver=form.email.data)
-        flash("一封邮件已经发送至{}， 请复制并填写到重置密码的验证码中。")
+        flash("一封邮件已经发送至{}， 请复制并填写到重置密码的确认码中。".format(user.email))
         return redirect(url_for("reset_password"))
     return render_template("auth/send_code.html", form=form)
 
