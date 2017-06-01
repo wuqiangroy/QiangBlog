@@ -16,7 +16,7 @@ from app.decorator import permission_required
 def index():
     """主页"""
 
-    pass
+    return render_template("home.html")
 
 
 @main.route("/profile/<username>", methods=["GET", "POST"])

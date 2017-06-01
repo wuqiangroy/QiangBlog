@@ -77,6 +77,5 @@ class ResetPassword(FlaskForm):
         DataRequired(), Length(1, 64), Regexp("[A-Za-z][A-Za-z0-9_.]*$",
                                               message="用户名只能是字母、数字、点或下划线")
     ])
-    code = StringField("确认码", validators=[DataRequired()])
     password = PasswordField("新密码", validators=[DataRequired()])
     submit = SubmitField("确认")
