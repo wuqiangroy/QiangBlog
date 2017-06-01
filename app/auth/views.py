@@ -12,6 +12,28 @@ from .form import LoginForm, RegisterForm, ChangePasswordForm, ChangeEmailForm, 
     ResetPassword, SendCodeForm
 
 
+@auth.before_app_request
+def before_request():
+    """判断用户邮箱是否验证"""
+
+    if current_user.is_authenticated:
+        current_user.ping()
+        if not current_user.confirmed \
+                and request.endpoint \
+                and request.endpoint[:5] != "auth." \
+                and request.endpoint != "static":
+            return redirect(url_for("auth.unconfirmed"))
+
+
+@auth.route("/unconfirmed")
+def unconfirmed():
+    """用户邮箱未验证不能执行访问"""
+
+    if current_user.is_anonymous or current_user.confirmed:
+        return redirect(url_for("main.index"))
+    return redirect(url_for("auth/unconfirmed.html"))
+
+
 @auth.route("/login", methods=["GET", "POST"])
 def login():
     """登录"""
@@ -34,8 +56,8 @@ def register():
 
     form = RegisterForm()
     if form.validate_on_submit():
-        invitation = form.invitation.data
-        code = InviteCode.query.filter_by(invitation=invitation).first()
+        invite_code = form.invite_code.data
+        code = InviteCode.query.filter_by(invite_code=invite_code).first()
         if not code:
             flash("邀请码不正确，请输入正确的邀请码")
         else:
@@ -43,14 +65,29 @@ def register():
                 username=form.username.data,
                 email=form.email.data,
                 password=form.password.data,
-                invitation=invitation
+                invite_code=invite_code
                 )
             db.session.delete(code)
             db.session.add(user)
             db.session.commit()
-            flash("现在可以登录了")
+            token = user.generate_confirmatiom_token()
+            send_mail(user.email, "邮箱确认", "auth/email/confirm",
+                      user=user, token=token)
+            flash("已往你的邮箱发送了一封邮件，请及时查收。")
         return redirect(url_for("login"))
     return render_template("auth/register.html", form=form)
+
+
+@auth.route("/confirm/<token>")
+@login_required
+def confirm(token):
+    if current_user.confirmed:
+        return redirect(url_for("main.index"))
+    if current_user.confirm(token):
+        flash("你的邮箱已验证！")
+    else:
+        flash("验证失败！")
+    return redirect(url_for("main.index"))
 
 
 @auth.route("/logout")

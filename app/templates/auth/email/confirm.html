@@ -1,0 +1,7 @@
+<p>{{ user.username }}, 你好！</p>
+<p>欢迎注册QiangBlog，在这里，你可以发表任何你想说的事情。</p>
+<p>言论自由，但是并不代表言论攻击和造谣。</p>
+<p><a href="{{ url_for('auth.confirm', token=token, _external=True)}}">点击验证邮箱</a> </p>
+<p>由于部分浏览器限制，如果不能点击，你可以复制以下链接到浏览器访问。</p>
+<p>{{ url_for("auth.confirm", token=token, _external=True )}}</p>
+<P>QiangBlong</P>

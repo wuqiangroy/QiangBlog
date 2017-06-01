@@ -3,7 +3,7 @@
 
 import uuid
 import threading
-from flask import current_app
+from flask import current_app, render_template
 from flask_mail import Message
 
 from app import mail
@@ -23,19 +23,14 @@ def send_async_mail(app, msg):
         mail.send(msg)
 
 
-def send_mail(receiver):
+def send_mail(receiver, subject, template, **kwargs):
     """发送邮件"""
 
     app = current_app._get_current_object()
-    text = """
-        <h3>Here is your code: {},</h3>
-        <h3>Please copy and paste it in the form.</h3>    
-        """
-    msg = Message(Config.MAIL_SUBJECT_PREFIX, sender=Config.MAIL_SENDER,
-                  recipients=[receiver])
-    msg.body = "Here is your code: {}, " \
-               "Please copy and paste it in the form."
-    msg.html = text
+    msg = Message(Config.MAIL_SUBJECT_PREFIX + "" + subject,
+                  sender=Config.MAIL_SENDER, recipients=[receiver])
+    msg.body = render_template(template + ".txt", **kwargs)
+    msg.html = render_template(template + ".html", **kwargs)
     thr = threading.Thread(target=send_async_mail, args=[app, msg])
     thr.start()
     return thr

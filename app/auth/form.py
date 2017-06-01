@@ -30,7 +30,7 @@ class RegisterForm(FlaskForm):
     ])
     email = StringField("邮箱", validators=[DataRequired(), Email(),
                                           Length(1, 64)])
-    invitation = StringField("请输入邀请码", validators=[DataRequired()])
+    invite_code = StringField("请输入邀请码", validators=[DataRequired()])
     password = PasswordField("密码", validators=[
         DataRequired(), EqualTo("password2", message="两次密码不正确")
     ])

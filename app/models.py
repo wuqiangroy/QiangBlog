@@ -68,7 +68,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(50), unique=True, index=True)
     email = db.Column(db.String, unique=True, index=True)
     password_hash = db.Column(db.String)
-    invitation_code = db.Column(db.String, unique=True)
+    invite_code = db.Column(db.String, unique=True)
     permissions = db.Column(db.Integer)
     confirmed = db.Column(db.Boolean, default=False)
     realname = db.Column(db.String, index=True)

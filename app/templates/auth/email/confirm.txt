@@ -1,0 +1,6 @@
+{{ user.username }}, 你好！
+欢迎注册QiangBlog，在这里，你可以发表任何你想说的事情。
+言论自由，但是并不代表言论攻击和造谣。
+请点击以下链接到浏览器访问。
+{{ url_for("auth.confirm", token=token, _external=True )}}
+QiangBlong
