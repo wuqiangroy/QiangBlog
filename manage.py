@@ -3,7 +3,8 @@
 
 import os
 from app import create_app, db
-from app.models import User, Post, InviteCode, Permission, Comment, Role
+from app.models import User, Post, InviteCode, Permission, Comment, Role,\
+    Follow
 
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
@@ -31,7 +32,8 @@ def make_shell_context():
         InviteCode=InviteCode,
         Role=Role,
         Permission=Permission,
-        Comment=Comment
+        Comment=Comment,
+        Follow=Follow
     )
 
 manager.add_command("shell", Shell(make_context=make_shell_context))

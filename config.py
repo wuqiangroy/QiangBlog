@@ -14,6 +14,7 @@ class BaseConfig:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
+    SLOW_DB_QUERY_TIME = 0.5
     MAIL_SUBJECT_PREFIX = "[QiangBlog]"
     MAIL_SENDER = "QiangBlog <wuqiangroy@live.com>"
     MAIL_SERVER = "smtp-mail.outlook.com"
@@ -21,6 +22,10 @@ class BaseConfig:
     MAIL_USE_TLS = True
     MAIL_USERNAME = "wuqiangroy@live.com"
     MAIL_PASSWORD = os.environ.get("password")
+    POST_PER_PAGE = 20
+    COMMENT_PER_PAGE = 20
+    FOLLOWER_PER_PAGE = 20
+    FOLLOWED_PER_PAGE = 20
 
     @staticmethod
     def init_app(app):

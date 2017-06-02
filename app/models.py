@@ -69,7 +69,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String, unique=True, index=True)
     password_hash = db.Column(db.String)
     invite_code = db.Column(db.String, unique=True)
-    permissions = db.Column(db.Integer)
+    permissions = db.Column(db.Integer, default=3)
     confirmed = db.Column(db.Boolean, default=False)
     realname = db.Column(db.String, index=True)
     about_me = db.Column(db.Text())
@@ -85,6 +85,54 @@ class User(UserMixin, db.Model):
     invite_codes = db.relationship("InviteCode", backref="user", lazy="dynamic")
     posts = db.relationship("Post", backref="author", lazy="dynamic")
     comments = db.relationship("Comment", backref="author", lazy="dynamic")
+    followed = db.relationship("Follow",
+                               foreign_keys=[Follow.follower_id],
+                               backref=db.backref("follower", lazy="joined"),
+                               lazy="dynamic",
+                               cascade="all, delete-orphan"
+                               )
+    follower = db.relationship("Follow",
+                               foreign_keys=[Follow.followed_id],
+                               backref=db.backref("followed", lazy="joined"),
+                               lazy="dynamic",
+                               cascade="all, delete-orphan"
+                               )
+
+    @staticmethod
+    def add_self_follows():
+        """默认自己关注自己，在关注数中减一"""
+
+        for user in User.query.all():
+            if not user.is_following(user):
+                user.follow(user)
+                db.session.add(user)
+                db.session.commit()
+
+    def follow(self, user):
+        """关注"""
+
+        if not self.is_following(user):
+            f = Follow(follower=self, followed=user)
+            db.session.add(f)
+            db.session.commit()
+
+    def unfollow(self, user):
+        """取消关注"""
+
+        f = self.followed.filter_by(followed_id=user.id).first()
+        if f:
+            db.session.add(f)
+            db.session.commit()
+
+    def is_following(self, user):
+        """是否关注user"""
+
+        return self.followed.filter_by(followed_id=user.id).first() is not None
+
+    def is_followed(self, user):
+        """是否被user关注"""
+
+        return self.follower.filter_by(follower_id=user.id).first() is not None
 
     @property
     def password(self):
@@ -194,6 +242,18 @@ class User(UserMixin, db.Model):
         return True
 
 
+class Follow(db.Model):
+    """关注第三方表"""
+
+    __tablename__ = "follows"
+
+    follower_id = db.Column(db.Integer, db.ForeignKey("users.id"),
+                            primary_key=True)
+    followed_id = db.Column(db.Integer, db.ForeignKey("users.id"),
+                            primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 class Post(db.Model):
     """文章表"""
 
@@ -252,6 +312,7 @@ class InviteCode(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     invite_code = db.Column(db.String, unique=True)
+    timestamp = db.Column(db.DateTime(), default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
 

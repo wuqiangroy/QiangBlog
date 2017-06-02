@@ -10,12 +10,6 @@ from app import mail
 from config import BaseConfig
 
 
-def create_invitation_code():
-    """邀请码生成"""
-
-    return str(uuid.uuid1()).replace("-", "")
-
-
 def send_async_mail(app, msg):
     """发送异步邮件"""
 
