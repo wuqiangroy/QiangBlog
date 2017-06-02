@@ -12,8 +12,8 @@ from flask_login import UserMixin, AnonymousUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import JSONWebSignatureSerializer as Serializer
 
-from app import db, login_manager
-from config import Config
+from . import db, login_manager
+from config import BaseConfig
 
 
 class Permission:
@@ -119,7 +119,7 @@ class User(UserMixin, db.Model):
     def generate_confirmatiom_token(self):
         """生成邮箱确认token"""
 
-        s = Serializer(Config.SECRET_KEY)
+        s = Serializer(BaseConfig.SECRET_KEY)
         return s.dumps({"confirm": self.id})
 
     def confirm(self, token):
@@ -128,12 +128,14 @@ class User(UserMixin, db.Model):
         token通过即将confirmed设置为True
         """
 
-        s = Serializer(Config.SECRET_KEY)
+        s = Serializer(BaseConfig.SECRET_KEY)
         try:
-            data = s.load(token)
+            data = s.loads(token)
         except:
             return False
-        if data.get("confime") != self.id:
+        if data.get("confirm") != self.id:
+            print(data.get("confirm"))
+            print(self.id)
             return False
         self.confirmed = True
         db.session.add(self)
@@ -143,13 +145,13 @@ class User(UserMixin, db.Model):
     def generate_reset_token(self):
         """生成重置密码所需token"""
 
-        s = Serializer(Config.SECRET_KEY)
+        s = Serializer(BaseConfig.SECRET_KEY)
         return s.dumps({"reset": self.id})
 
     def reset_password(self, token, new_password):
         """重置密码"""
 
-        s = Serializer(Config.SECRET_KEY)
+        s = Serializer(BaseConfig.SECRET_KEY)
         try:
             data = s.loads(token)
         except:
@@ -164,7 +166,7 @@ class User(UserMixin, db.Model):
     def generate_change_email_token(self, new_email):
         """生成更改邮箱所需token"""
 
-        s = Serializer(Config.SECRET_KEY)
+        s = Serializer(BaseConfig.SECRET_KEY)
         return s.dumps({
             "change_email": self.id,
             "new_email": new_email
@@ -173,7 +175,7 @@ class User(UserMixin, db.Model):
     def change_email(self, token):
         """验证token，更改email"""
 
-        s = Serializer(Config.SECRET_KEY)
+        s = Serializer(BaseConfig.SECRET_KEY)
         try:
             data = s.loads(token)
         except:
@@ -215,6 +217,8 @@ class Post(db.Model):
             markdown(value, output_format="html"),
             tags=allowed_tags, strip=True))
 
+db.event.listen(Post.content, "set", Post.change_body)
+
 
 class Comment(db.Model):
     """评论， 和文章是多对一关系"""
@@ -238,6 +242,8 @@ class Comment(db.Model):
             markdown(value, output_format="html"),
             tags=allowed_tags, strip=True))
 
+db.event.listen(Comment.text, "set", Comment.change_body)
+
 
 class InviteCode(db.Model):
     """邀请码单设一个表"""
@@ -259,3 +265,10 @@ class AnonymousUser(AnonymousUserMixin):
         return False
 
 login_manager.anonymous_user = AnonymousUser
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    """载入用户"""
+
+    return User.query.get(int(user_id))

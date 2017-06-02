@@ -6,15 +6,15 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-class Config:
+class BaseConfig:
     """基础配置"""
 
-    SECRET_KEY = os.environ.get("SECRET_KEY") or "coding change world"
+    SECRET_KEY = os.environ.get("secret_key") or "coding change world"
     SSL_DISABLE = False
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
-    MAIL_SUBJECT_PREFIX = ["QiangBlog"]
+    MAIL_SUBJECT_PREFIX = "[QiangBlog]"
     MAIL_SENDER = "QiangBlog <wuqiangroy@live.com>"
     MAIL_SERVER = "smtp-mail.outlook.com"
     MAIL_PORT = 587
@@ -27,14 +27,14 @@ class Config:
         pass
 
 
-class Development(Config):
+class Development(BaseConfig):
     """开发配置"""
 
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = "postgresql://dbuser:password@localhost/dev_qiangblog"
 
 
-class Production(Config):
+class Production(BaseConfig):
     """线上配置"""
 
     SQLALCHEMY_DATABASE_URI = "postgresql://dbuser:password@localhost/pro_qiangblog"

@@ -7,7 +7,7 @@ from flask import current_app, render_template
 from flask_mail import Message
 
 from app import mail
-from config import Config
+from config import BaseConfig
 
 
 def create_invitation_code():
@@ -27,8 +27,8 @@ def send_mail(receiver, subject, template, **kwargs):
     """发送邮件"""
 
     app = current_app._get_current_object()
-    msg = Message(Config.MAIL_SUBJECT_PREFIX + "" + subject,
-                  sender=Config.MAIL_SENDER, recipients=[receiver])
+    msg = Message(BaseConfig.MAIL_SUBJECT_PREFIX + "" + subject,
+                  sender=BaseConfig.MAIL_SENDER, recipients=[receiver])
     msg.body = render_template(template + ".txt", **kwargs)
     msg.html = render_template(template + ".html", **kwargs)
     thr = threading.Thread(target=send_async_mail, args=[app, msg])

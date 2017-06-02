@@ -1,0 +1,19 @@
+{% extends "base.html"%}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block titile %}Qiang - Confirm Your Account{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>
+        你好， {{ current_user.username }}
+    </h1>
+    <h3>系统检测到你还并未验证你的邮箱，这会对之后的体验造成很大影响。</h3>
+    <h3>为了保证你之后的体验，在访问内容之前，你必须验证你的邮箱。</h3>
+    <p>
+        再来一发邮件？
+        <a href="{{ url_for('auth.resend_confirmation') }}">点击发送</a>
+    </p>
+</div>
+{% endblock %}
