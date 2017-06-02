@@ -169,15 +169,15 @@ def reset_password_request():
         return redirect(url_for("main.index"))
     form = ResetPasswordRequest()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(email=form.email.data).first()
         if user:
             token = user.generate_reset_token()
-            send_mail(user.email, "密码重置", "auth/email/reset_password.txt",
+            send_mail(user.email, "密码重置", "auth/email/reset_password",
                       user=user, token=token)
             flash("重置密码的请求邮件已经发送至你的邮箱，请注意查收。")
             return redirect(url_for("login"))
         flash("验证码错误！")
-    return render_template("auth/reset_password.txt.html", form=form)
+    return render_template("auth/reset_password.html", form=form)
 
 
 @auth.route("/reset/password/<token>", methods=["GET", "POST"])
@@ -197,4 +197,4 @@ def reset_password(token):
             return redirect(url_for("auth.login"))
         else:
             return redirect(url_for("main.index"))
-    return render_template("auth/reset_password.txt.html", form=form)
+    return render_template("auth/reset_passwordhtml", form=form)
