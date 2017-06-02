@@ -70,12 +70,23 @@ class ChangeEmailForm(FlaskForm):
             raise ValidationError("邮箱已注册！")
 
 
-class ResetPassword(FlaskForm):
-    """重置密码"""
+class ResetPasswordRequest(FlaskForm):
+    """重置密码请求表单"""
 
-    username = StringField("用户名", validators=[
-        DataRequired(), Length(1, 64), Regexp("[A-Za-z][A-Za-z0-9_.]*$",
-                                              message="用户名只能是字母、数字、点或下划线")
+    email = StringField("邮箱", validators=[DataRequired(), Email()])
+    submit = SubmitField("发送邮件")
+
+
+class ResetPassword(FlaskForm):
+    """重置密码表单"""
+
+    email = StringField("邮箱", validators=[DataRequired(), Email()])
+    password = PasswordField("密码", validators=[
+        DataRequired(), EqualTo("password2", message="两次密码不正确")
     ])
-    password = PasswordField("新密码", validators=[DataRequired()])
-    submit = SubmitField("确认")
+    password2 = PasswordField("再次输入密码", validators=[DataRequired()])
+    submit = SubmitField("重置密码")
+
+    def valid_mail(self, field):
+        if User.query.filter_by(email=field.data).first() is None:
+            raise ValidationError("未匹配到邮箱")

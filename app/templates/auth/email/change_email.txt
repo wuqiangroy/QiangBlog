@@ -1,0 +1,4 @@
+{{ user.username }}, 你好！
+可以复制以下链接到浏览器以此验证你的新邮箱。
+{{ url_for("auth.confirm", token=token, _external=True )}}
+QiangBlong

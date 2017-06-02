@@ -9,7 +9,7 @@ from app.models import User, InviteCode
 from app.util import send_mail
 from . import auth
 from .form import LoginForm, RegisterForm, ChangePasswordForm, ChangeEmailForm, \
-    ResetPassword
+    ResetPasswordRequest, ResetPassword
 
 
 @auth.before_app_request
@@ -90,6 +90,18 @@ def confirm(token):
     return redirect(url_for("main.index"))
 
 
+@auth.route("/confirm")
+@login_required
+def resend_confirmation():
+    """重发确认邮件"""
+
+    token = current_user.generate_confirmatiom_token()
+    send_mail(current_user.email, "确认邮箱", "auth/email/confirm",
+              user=current_user, token=token)
+    flash("已往你的邮箱发送了一封邮件，请及时查收。")
+    return redirect(url_for("main.index"))
+
+
 @auth.route("/logout")
 @login_required
 def logou():
@@ -112,7 +124,8 @@ def change_password():
             db.session.add(current_user)
             db.session.commit()
             flash("密码已修改")
-            return redirect(url_for("logout"))
+            logout_user()
+            return redirect(url_for("auth.login"))
         else:
             flash("密码错误")
     return render_template("auth/change_password.html", form=form)
@@ -120,32 +133,68 @@ def change_password():
 
 @auth.route("/change/email", methods=["GET", "POST"])
 @login_required
-def change_email():
-    """更改email"""
+def change_email_request():
+    """更改email请求"""
 
     form = ChangeEmailForm()
     if form.validate_on_submit():
         if current_user.verify_password(form.password.data):
-            current_user.email = form.email.data
-            db.session.add(current_user)
-            db.session.commit()
-            flash("邮箱已修改")
+            new_email = form.email.data
+            token = current_user.generate_change_email_token(new_email)
+            send_mail(new_email, "确认邮箱", "auth/email/change_email",
+                      user=current_user, token=token)
+            flash("一封邮件已发送至你的新邮箱，请注意查收。")
+            return redirect(url_for("main.index"))
         else:
             flash("密码错误")
     return render_template("auth/change_email.html", form=form)
 
 
-@auth.route("/reset/password", methods=["GET", "POST"])
-def reset_password():
-    """重置密码"""
+@auth.route("/change/email/<token>")
+@login_required
+def change_email(token):
+    """更改邮箱"""
 
-    form = ResetPassword()
+    if current_user.change_email(token):
+        flash("你的邮箱已更换")
+    else:
+        flash("未知请求")
+    return redirect(url_for("main.index"))
+
+
+@auth.route("/reset/password", methods=["GET", "POST"])
+def reset_password_request():
+    """重置密码"""
+    if not current_user.is_anonymous:
+        return redirect(url_for("main.index"))
+    form = ResetPasswordRequest()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user and user.code == form.code.data:
-            user.password = form.password.data
-            db.session.add(user)
-            db.session.commit()
+        if user:
+            token = user.generate_reset_token()
+            send_mail(user.email, "密码重置", "auth/email/reset_password.txt",
+                      user=user, token=token)
+            flash("重置密码的请求邮件已经发送至你的邮箱，请注意查收。")
             return redirect(url_for("login"))
         flash("验证码错误！")
-    return render_template("auth/reset_password.html", form=form)
+    return render_template("auth/reset_password.txt.html", form=form)
+
+
+@auth.route("/reset/password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    """重置密码"""
+
+    if not current_user.is_anonymous:
+        return redirect(url_for("main.index"))
+    form = ResetPassword()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is None:
+            flash("用户不存在")
+            return redirect(url_for("main.index"))
+        if user.reset_password(token, form.password.data):
+            flash("密码已重置")
+            return redirect(url_for("auth.login"))
+        else:
+            return redirect(url_for("main.index"))
+    return render_template("auth/reset_password.txt.html", form=form)
