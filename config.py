@@ -22,6 +22,7 @@ class BaseConfig:
     MAIL_USE_TLS = True
     MAIL_USERNAME = "wuqiangroy@live.com"
     MAIL_PASSWORD = os.environ.get("password")
+    MAIL_ADMIN = os.environ.get("MAIL_ADMIN") or "wuqiangroy@live.com"
     POST_PER_PAGE = 20
     COMMENT_PER_PAGE = 20
     FOLLOWER_PER_PAGE = 20
