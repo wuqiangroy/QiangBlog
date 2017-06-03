@@ -59,6 +59,18 @@ class Role(db.Model):
         db.session.commit()
 
 
+class Follow(db.Model):
+    """关注第三方表"""
+
+    __tablename__ = "follows"
+
+    follower_id = db.Column(db.Integer, db.ForeignKey("users.id"),
+                            primary_key=True)
+    followed_id = db.Column(db.Integer, db.ForeignKey("users.id"),
+                            primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 class User(UserMixin, db.Model):
     """user表"""
 
@@ -85,18 +97,18 @@ class User(UserMixin, db.Model):
     invite_codes = db.relationship("InviteCode", backref="user", lazy="dynamic")
     posts = db.relationship("Post", backref="author", lazy="dynamic")
     comments = db.relationship("Comment", backref="author", lazy="dynamic")
-    followed = db.relationship("Follow",
+    followed = db.relationship('Follow',
                                foreign_keys=[Follow.follower_id],
-                               backref=db.backref("follower", lazy="joined"),
-                               lazy="dynamic",
-                               cascade="all, delete-orphan"
+                               backref=db.backref('follower', lazy='joined'),
+                               lazy='dynamic',
+                               cascade='all, delete-orphan'
                                )
-    follower = db.relationship("Follow",
-                               foreign_keys=[Follow.followed_id],
-                               backref=db.backref("followed", lazy="joined"),
-                               lazy="dynamic",
-                               cascade="all, delete-orphan"
-                               )
+    followers = db.relationship('Follow',
+                                foreign_keys=[Follow.followed_id],
+                                backref=db.backref('followed', lazy='joined'),
+                                lazy='dynamic',
+                                cascade='all, delete-orphan'
+                                )
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -251,18 +263,6 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         db.session.commit()
         return True
-
-
-class Follow(db.Model):
-    """关注第三方表"""
-
-    __tablename__ = "follows"
-
-    follower_id = db.Column(db.Integer, db.ForeignKey("users.id"),
-                            primary_key=True)
-    followed_id = db.Column(db.Integer, db.ForeignKey("users.id"),
-                            primary_key=True)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class Post(db.Model):
