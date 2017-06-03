@@ -338,7 +338,7 @@ def followed_by(username):
             "timestamp": item.timestamp
         } for item in pagination.items
     ]
-    return render_template("followers.html", user=user, title="关注者",
+    return render_template("followers.html", user=user, title="关注了",
                            endpoint=".followed_by", pagination=pagination,
                            follows=follows)
 

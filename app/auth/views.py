@@ -58,8 +58,11 @@ def register():
     if form.validate_on_submit():
         invite_code = form.invite_code.data
         code = InviteCode.query.filter_by(invite_code=invite_code).first()
+        user = User.query.filter_by(invite_code=invite_code).first()
         if not code:
             flash("邀请码不正确，请输入正确的邀请码")
+        elif user:
+            flash("邀请码已被使用")
         else:
             user = User(
                 username=form.username.data,
@@ -67,14 +70,13 @@ def register():
                 password=form.password.data,
                 invite_code=invite_code
                 )
-            db.session.delete(code)
             db.session.add(user)
             db.session.commit()
             token = user.generate_confirmatiom_token()
             send_mail(user.email, "邮箱确认", "auth/email/confirm",
                       user=user, token=token)
             flash("已往你的邮箱发送了一封邮件，请及时查收。")
-        return redirect(url_for("auth.login"))
+            return redirect(url_for("auth.login"))
     return render_template("auth/register.html", form=form)
 
 
