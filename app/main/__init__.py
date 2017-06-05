@@ -11,3 +11,11 @@ from flask import Blueprint
 main = Blueprint("main", __name__)
 
 from . import views
+from app.models import Permission
+
+
+@main.app_context_processor
+def inject_permission():
+    """Permission注册"""
+
+    return dict(Permission=Permission)

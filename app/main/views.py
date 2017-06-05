@@ -11,7 +11,7 @@ from . import main
 from .form import PostForm, ProfileForm, ProfileAdminForm, CommentForm
 from config import BaseConfig
 from app import db
-from app.models import User, Permission, Post, Comment, InviteCode
+from app.models import User, Permission, Post, Comment, InviteCode, Role
 from app.decorator import permission_required
 
 
@@ -108,19 +108,17 @@ def edit_profile_admin(username):
         return redirect(url_for("main.index"))
     form = ProfileAdminForm(user=user)
     if form.validate_on_submit():
-        user(
-            username=form.username.data,
-            email=form.email.data,
-            confirmed=form.confirmed.data,
-            role=form.role.data,
-            realname=form.realname.data,
-            phone=form.phone.data,
-            location=form.location.data,
-            QQ=form.QQ.data,
-            wechat=form.wechat.data,
-            weibo=form.weibo.data,
-            about_me=form.about_me.data
-        )
+        user.username = form.username.data
+        user.email = form.email.data
+        user.confirmed = form.confirmed.data
+        user.role = Role.query.get(form.role.data)
+        user.realname = form.realname.data
+        user.phone = form.phone.data
+        user.location = form.location.data
+        user.QQ = form.QQ.data
+        user.wechat = form.wechat.data
+        user.weibo = form.weibo.data
+        user.about_me = form.about_me.data
         db.session.add(user)
         db.session.commit()
         flash("改用户资料已更新")

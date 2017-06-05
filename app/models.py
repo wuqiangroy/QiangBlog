@@ -39,24 +39,29 @@ class Role(db.Model):
 
     @staticmethod
     def insert_roles():
+        """将角色写入数据库"""
+
         roles = {
             "User": (Permission.FOLLOW |
                      Permission.COMMENT |
                      Permission.POST, True),
-            "manager": (Permission.FOLLOW |
-                        Permission.COMMENT |
-                        Permission.POST |
-                        Permission.EDIT_COMMENT, False),
-            "administrator": (0xff, False)
+            "Moderator": (Permission.FOLLOW |
+                          Permission.COMMENT |
+                          Permission.POST |
+                          Permission.EDIT_COMMENT, False),
+            "Administrator": (0xff, False)
         }
         for i in roles:
             role = Role.query.filter_by(name=i).first()
             if role is None:
                 role = Role(name=i)
-            role.permissions = role[i][0]
-            role.default = role[i][1]
+            role.permissions = roles[i][0]
+            role.default = roles[i][1]
             db.session.add(role)
         db.session.commit()
+
+    def __repr__(self):
+        return "<Role {}>".format(self.name)
 
 
 class Follow(db.Model):

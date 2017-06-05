@@ -23,11 +23,13 @@
         <p>注册时间：{{ moment(user.register_time).format('L') }}，最后一次登录：{{ moment(user.last_seen).format("LLL") }}.</p>
         <p>{{ user.posts.count() }} 篇文章. {{ user.comments.count() }} 评论.</p>
         <p>
+            {% if current_user.can(Permission.FOLLOW) and user != current_user %}
                 {% if not current_user.is_following(user) %}
                 <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">关注</a>
                 {% else %}
                 <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-default">取消关注</a>
                 {% endif %}
+            {% endif %}
             <a href="{{ url_for('.followers', username=user.username) }}">粉丝: <span class="badge">{{ user.followers.count() - 1 }}</span></a>
             <a href="{{ url_for('.followed_by', username=user.username) }}">关注了: <span class="badge">{{ user.followed.count() - 1 }}</span></a>
             {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
@@ -39,7 +41,7 @@
             <a class="btn btn-default" href="{{ url_for('.edit_profile') }}">编辑个人资料</a>
             {% endif %}
             {% if current_user.is_administrator() %}
-            <a class="btn btn-danger" href="{{ url_for('.edit_profile_admin', id=user.id) }}">编辑用户资料[管理员]</a>
+            <a class="btn btn-danger" href="{{ url_for('.edit_profile_admin', username=user.username) }}">编辑用户资料[管理员]</a>
             {% endif %}
         </p>
         <p>
