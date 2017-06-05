@@ -344,7 +344,7 @@ def followed_by(username):
 @main.route("/moderate")
 @login_required
 @permission_required(Permission.EDIT_COMMENT)
-def moderator():
+def moderate():
     """所有评论管理"""
 
     page = request.args.get("page", 1, type=int)
@@ -359,28 +359,28 @@ def moderator():
 @main.route("/moderator/enable/<int:id>")
 @login_required
 @permission_required(Permission.EDIT_COMMENT)
-def moderator_enable(id):
+def moderate_enable(id):
     """展示评论"""
 
     comment = Comment.query.get_or_404(id)
     comment.disable = False
     db.session.add(comment)
     db.session.commit()
-    return render_template(url_for("main.moderator",
+    return render_template(url_for("main.moderate",
                                    page=request.args.get("page", 1, type=int)))
 
 
 @main.route("/moderator/disable/<int:id>")
 @login_required
 @permission_required(Permission.EDIT_COMMENT)
-def moderator_disable(id):
+def moderate_disable(id):
     """隐藏评论"""
 
     comment = Comment.query.get_or_404(id)
     comment.disable = True
     db.session.add(comment)
     db.session.commit()
-    return redirect(url_for("main.moderator",
+    return redirect(url_for("main.moderate",
                             page=request.args.get("page", 1, type=int)))
 
 
