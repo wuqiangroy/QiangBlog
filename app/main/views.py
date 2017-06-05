@@ -146,15 +146,15 @@ def write_post():
 
     form = PostForm()
     if form.validate_on_submit():
-        user = User(
+        post = Post(
             title=form.title.data,
             content=form.content.data,
             author=current_user._get_current_object()
         )
-        db.session.add(user)
+        db.session.add(post)
         db.session.commit()
         flash("发布成功！")
-        return redirect(url_for("main.post_page", id=user.id))
+        return redirect(url_for("main.post_page", id=post.id))
     return render_template("write_post.html", form=form)
 
 
@@ -162,7 +162,7 @@ def write_post():
 def post_page(id):
     """文章页"""
 
-    post = Post.query.first_or_404(id)
+    post = Post.query.get_or_404(id)
     form = CommentForm()
     if form.validate_on_submit():
         comment = Comment(
@@ -192,7 +192,7 @@ def post_page(id):
 def edit_post(id):
     """编辑文章"""
 
-    post = Post.query.first_or_404(id)
+    post = Post.query.get_or_404(id)
     if current_user != post.author and \
             not current_user.can(Permission.ADMINISTER):
         abort(403)
@@ -214,7 +214,7 @@ def edit_post(id):
 def edit_comment(id):
     """编辑评论"""
 
-    comment = Comment.query.first_or_404(id)
+    comment = Comment.query.get_or_404(id)
     if current_user != comment.author and not \
             not current_user.can(Permission.EDIT_COMMENT):
         abort(403)
@@ -234,7 +234,7 @@ def edit_comment(id):
 def delete_post(id):
     """删除文章"""
 
-    post = Post.query.first_or_404(id)
+    post = Post.query.get_or_404(id)
     title = post.title
     if current_user != post.author and \
             not current_user.can(Permission.ADMINISTER):
@@ -250,7 +250,7 @@ def delete_post(id):
 def delete_comment(id):
     """删除评论"""
 
-    comment = Comment.query.first_or_404(id)
+    comment = Comment.query.get_or_404(id)
     post_id = comment.post_id
     if current_user != comment.author and \
             not current_user.can(Permission.ADMINISTER):
@@ -348,13 +348,13 @@ def followed_by(username):
 def generate_invite_code():
     """生成邀请码"""
 
-    if current_user.invite_code.count() >= 5:
+    if current_user.invite_codes.count() >= 5:
         flash("邀请码数量足够，请不要再生成！")
         return redirect(url_for("main.profile",
                                 username=current_user.username))
-    invite_code = str(uuid.uuid1()).replace("-", "")
     n = 0
     while n < 5:
+        invite_code = str(uuid.uuid1()).replace("-", "")
         invite = InviteCode(
             invite_code=invite_code,
             user=current_user._get_current_object()

@@ -81,13 +81,12 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String, unique=True, index=True)
     password_hash = db.Column(db.String)
     invite_code = db.Column(db.String, unique=True)
-    permissions = db.Column(db.Integer, default=3)
     confirmed = db.Column(db.Boolean, default=False)
     realname = db.Column(db.String, index=True)
     about_me = db.Column(db.Text())
     location = db.Column(db.String)
     QQ = db.Column(db.String)
-    phone_number = db.Column(db.String)
+    phone = db.Column(db.String)
     wechat = db.Column(db.String)
     weibo = db.Column(db.String)
     register_time = db.Column(db.DateTime(), default=datetime.utcnow)
@@ -170,7 +169,7 @@ class User(UserMixin, db.Model):
 
     def can(self, permissions):
         return self.role is not None and \
-               (self.role.permissions & permissions) == permissions
+            (self.role.permissions & permissions) == permissions
 
     def is_administrator(self):
         return self.can(Permission.ADMINISTER)

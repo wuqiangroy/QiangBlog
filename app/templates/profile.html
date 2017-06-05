@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% import "_macros.html" as macros %}
 
-{% block title %}Flasky - {{ user.username }}{% endblock %}
+{% block title %}QiangBlog - {{ user.username }}{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
@@ -20,28 +20,18 @@
         <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
         {% endif %}
         {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
-        <p>注册于：{{ moment(user.register_time).format('L') }}，最后一次登录：{{ moment(user.last_seen).fromNow() }}.</p>
+        <p>注册时间：{{ moment(user.register_time).format('L') }}，最后一次登录：{{ moment(user.last_seen).format("LLL") }}.</p>
         <p>{{ user.posts.count() }} 篇文章. {{ user.comments.count() }} 评论.</p>
         <p>
-            {% if current_user.can(Permission.FOLLOW) and user != current_user %}
                 {% if not current_user.is_following(user) %}
                 <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">关注</a>
                 {% else %}
                 <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-default">取消关注</a>
                 {% endif %}
-            {% endif %}
             <a href="{{ url_for('.followers', username=user.username) }}">粉丝: <span class="badge">{{ user.followers.count() - 1 }}</span></a>
             <a href="{{ url_for('.followed_by', username=user.username) }}">关注了: <span class="badge">{{ user.followed.count() - 1 }}</span></a>
             {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
             | <span class="label label-default">已关注你</span>
-            {% endif %}
-        </p>
-        <p>
-            {% for invite_code in invite_codes %}
-            invite_code
-            {% endfor %}
-            {% if current_user.invite_code.count() < 5 %}
-            <a href="{{ url_for('main.generate_invite_code')}}">生成邀请码</a>
             {% endif %}
         </p>
         <p>
@@ -52,13 +42,23 @@
             <a class="btn btn-danger" href="{{ url_for('.edit_profile_admin', id=user.id) }}">编辑用户资料[管理员]</a>
             {% endif %}
         </p>
+        <p>
+            <p><h4>邀请码:</h4></p>
+            {% for invite_code in invite_codes %}
+            {{ invite_code.invite_code }}
+            <br>
+            {% endfor %}
+            {% if current_user.invite_codes.count() < 5 %}
+            <a href="{{ url_for('main.generate_invite_code')}}">生成邀请码</a>
+            {% endif %}
+        </p>
     </div>
 </div>
 <h3>{{ user.username }} 的文章</h3>
 {% include '_posts.html' %}
 {% if pagination %}
 <div class="pagination">
-    {{ macros.pagination_widget(pagination, '.user', username=user.username) }}
+    {{ macros.pagination_widget(pagination, '.profile', username=user.username) }}
 </div>
 {% endif %}
 {% endblock %}
