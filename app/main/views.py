@@ -341,6 +341,49 @@ def followed_by(username):
                            follows=follows)
 
 
+@main.route("/moderate")
+@login_required
+@permission_required(Permission.EDIT_COMMENT)
+def moderator():
+    """所有评论管理"""
+
+    page = request.args.get("page", 1, type=int)
+    pagination = Comment.query.order_by(Comment.create_time.desc()).paginate(
+        page, per_page=BaseConfig.COMMENT_PER_PAGE, error_out=False
+    )
+    comments = pagination.items
+    return render_template("moderator.html", comments=comments,
+                           pagination=pagination, page=page)
+
+
+@main.route("/moderator/enable/<int:id>")
+@login_required
+@permission_required(Permission.EDIT_COMMENT)
+def moderator_enable(id):
+    """展示评论"""
+
+    comment = Comment.query.get_or_404(id)
+    comment.disable = False
+    db.session.add(comment)
+    db.session.commit()
+    return render_template(url_for("main.moderator",
+                                   page=request.args.get("page", 1, type=int)))
+
+
+@main.route("/moderator/disable/<int:id>")
+@login_required
+@permission_required(Permission.EDIT_COMMENT)
+def moderator_disable(id):
+    """隐藏评论"""
+
+    comment = Comment.query.get_or_404(id)
+    comment.disable = True
+    db.session.add(comment)
+    db.session.commit()
+    return redirect(url_for("main.moderator",
+                            page=request.args.get("page", 1, type=int)))
+
+
 @main.route("/generate/invite_code")
 @login_required
 def generate_invite_code():
