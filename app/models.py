@@ -10,7 +10,7 @@ from datetime import datetime
 from flask import current_app, request, url_for
 from flask_login import UserMixin, AnonymousUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from itsdangerous import JSONWebSignatureSerializer as Serializer
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 from . import db, login_manager
 from config import BaseConfig
@@ -191,10 +191,10 @@ class User(UserMixin, db.Model):
         hash = self.avatar_hash or hashlib.md5(self.email.encode()).hexdigest()
         return "{}/{}?s={}&d={}&r={}".format(url, hash, size, default, rating)
 
-    def generate_confirmatiom_token(self):
+    def generate_confirmatiom_token(self, expiration=3600):
         """生成邮箱确认token"""
 
-        s = Serializer(BaseConfig.SECRET_KEY)
+        s = Serializer(BaseConfig.SECRET_KEY, expiration)
         return s.dumps({"confirm": self.id})
 
     def confirm(self, token):
@@ -217,10 +217,10 @@ class User(UserMixin, db.Model):
         db.session.commit()
         return True
 
-    def generate_reset_token(self):
+    def generate_reset_token(self, expiration=3600):
         """生成重置密码所需token"""
 
-        s = Serializer(BaseConfig.SECRET_KEY)
+        s = Serializer(BaseConfig.SECRET_KEY, expiration)
         return s.dumps({"reset": self.id})
 
     def reset_password(self, token, new_password):
@@ -238,10 +238,10 @@ class User(UserMixin, db.Model):
         db.session.commit()
         return True
 
-    def generate_change_email_token(self, new_email):
+    def generate_change_email_token(self, new_email, expiration=3600):
         """生成更改邮箱所需token"""
 
-        s = Serializer(BaseConfig.SECRET_KEY)
+        s = Serializer(BaseConfig.SECRET_KEY, expiration)
         return s.dumps({
             "change_email": self.id,
             "new_email": new_email
