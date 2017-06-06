@@ -395,7 +395,7 @@ def generate_invite_code():
                                 username=current_user.username))
     n = 0
     while n < 5:
-        invite_code = str(uuid.uuid1()).replace("-", "")
+        invite_code = str(uuid.uuid4()).replace("-", "")
         invite = InviteCode(
             invite_code=invite_code,
             user=current_user._get_current_object()
