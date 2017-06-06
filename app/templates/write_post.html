@@ -1,13 +1,32 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
+{% block head %}
+{{ super() }}
+<script src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
+{% endblock %}
+
 {% block title %}QiangBlog - Write Post{% endblock %}
 
 {% block page_content %}
+
 <div class="page-header">
     <h1 align="center">发布文章</h1>
 </div>
-<div class="col-md-4">
-    {{ wtf.quick_form(form) }}
-</div>
+<form method="post" class="form" role="form">
+    <input id="csrf_token" name="crsf_token" type="hidden" value="
+ImVlNDFlMzQxN2YxNTFmZGJmZTg4MGQyNzMxZWI3YmEyZTY3ZTI3OGMi.DBgPIw.MKsld3kghhWyykgw5mzVvrqQgEc">
+    <div class="form-group required">
+        <label class="control-label" for="title">标题</label>
+        <input class="form-control" id="title" name="title" required type="text" value>
+    </div>
+    <div>
+        {{ form.content(class="ckeditor") }}
+    </div>
+    <br>
+    <div>
+        {{ form.submit() }}
+        </div>
+</form>
+
 {% endblock %}
