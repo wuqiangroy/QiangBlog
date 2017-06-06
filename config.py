@@ -27,6 +27,7 @@ class BaseConfig:
     COMMENT_PER_PAGE = 20
     FOLLOWER_PER_PAGE = 20
     FOLLOWED_PER_PAGE = 20
+    BOOTSTRAP_SERVE_LOCAL = True
 
     @staticmethod
     def init_app(app):
