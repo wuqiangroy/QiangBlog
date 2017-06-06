@@ -9,7 +9,12 @@
     <h1>登录</h1>
 </div>
 <div class="col-md-4">
-    {{ wtf.quick_form(form) }}
+    <form class="form" method="POST">
+    {{ form.hidden_tag() }}
+    {{ wtf.form_field(form.username) }}
+    {{ wtf.form_field(form.password) }}
+    {{ wtf.form_field(form.submit) }}
+    </form>
     <br>
     <p>忘记密码？ <a href="{{ url_for('auth.reset_password_request') }}">重置密码</a></p>
     <p>新用户？ <a href="{{ url_for('auth.register') }}">注册新用户</a> </p>

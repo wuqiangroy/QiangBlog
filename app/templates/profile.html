@@ -54,8 +54,8 @@
                 {% endif %}
             <br>
             {% endfor %}
-            {% if current_user.invite_codes.count() < 5 %}
-            <a href="{{ url_for('main.generate_invite_code')}}">生成邀请码</a>
+            {% if current_user.invite_codes.count() < 5 or current_user.can(Permission.ADMINISTER) %}
+            <a href="{{ url_for('main.generate_invite_code')}}"><span class="label label-primary">生成邀请码</span></a>
             {% endif %}
         </p>
     </div>

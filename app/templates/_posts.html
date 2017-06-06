@@ -13,7 +13,7 @@
                 {% if post.content_html %}
                     {{ post.content_html | safe }}
                 {% else %}
-                    {{ post.content }}
+                    {{ post.content | safe }}
                 {% endif %}
             </div>
             <div class="post-footer">

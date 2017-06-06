@@ -4,12 +4,20 @@
 {% block title %}QiangBlog - Edit Post{% endblock %}
 
 {% block page_content %}
-<div class="page-header">
+<div class="page-header" style="text-align: center">
     <h1>编辑文章</h1>
 </div>
-<div>
-    {{ wtf.quick_form(form) }}
-</div>
+<form class="form" method="POST">
+    {{ form.hidden_tag() }}
+    {{ wtf.form_field(form.title) }}
+    <div>
+        {{ form.content(class="ckeditor") }}
+    </div>
+    <br>
+    <div>
+        {{ wtf.form_field(form.submit) }}
+        </div>
+</form>
 {% endblock %}
 
 {% block scripts %}

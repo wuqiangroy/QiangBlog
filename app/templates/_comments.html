@@ -17,7 +17,7 @@
                     {% if comment.text_html %}
                         {{ comment.text_html | safe }}
                     {% else %}
-                        {{ comment.text }}
+                        {{ comment.text | safe }}
                     {% endif %}
                 {% endif %}
             </div>
@@ -33,7 +33,7 @@
                 <br>
                 <a class="btn btn-default btn-xs" href="{{ url_for('main.edit_comment', id=comment.id) }}">编辑</a>
                 <a class="btn btn-danger btn-xs" href="{{ url_for('main.delete_comment', id=comment.id) }}">删除评论</a>
-            {% elif current_user.can(Permission.ADMINISTRATOR) %}
+            {% elif current_user.can(Permission.ADMINISTER) %}
                 <br>
                 <a class="btn btn-default btn-xs" href="{{ url_for('main.edit_comment', id=comment.id) }}">编辑 [管理员]</a>
                 <a class="btn btn-danger btn-xs" href="{{ url_for('main.delete_comment', id=comment.id) }}">删除评论 [管理员]</a>

@@ -389,19 +389,21 @@ def moderate_disable(id):
 def generate_invite_code():
     """生成邀请码"""
 
-    if current_user.invite_codes.count() >= 5:
+    if current_user.invite_codes.count() < 5 or \
+            current_user.can(Permission.ADMINISTER):
+        n = 0
+        while n < 5:
+            invite_code = str(uuid.uuid4()).replace("-", "")
+            invite = InviteCode(
+                invite_code=invite_code,
+                user=current_user._get_current_object()
+            )
+            db.session.add(invite)
+            db.session.commit()
+            n += 1
+        flash("5个邀请码已生成")
+    else:
         flash("邀请码数量足够，请不要再生成！")
         return redirect(url_for("main.profile",
                                 username=current_user.username))
-    n = 0
-    while n < 5:
-        invite_code = str(uuid.uuid4()).replace("-", "")
-        invite = InviteCode(
-            invite_code=invite_code,
-            user=current_user._get_current_object()
-        )
-        db.session.add(invite)
-        db.session.commit()
-        n += 1
-    flash("5个邀请码已生成")
     return redirect(url_for("main.profile", username=current_user.username))
