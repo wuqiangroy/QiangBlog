@@ -47,7 +47,11 @@
         <p>
             <p><h4>邀请码:</h4></p>
             {% for invite_code in invite_codes %}
-            {{ invite_code.invite_code }}
+                {% if User.query.filter_by(invite_code=invite_code.invite_code).first() %}
+                <del>{{ invite_code.invite_code }}</del>&emsp;&emsp;已使用
+                {% else %}
+                {{ invite_code.invite_code }}&emsp;&emsp;未使用
+                {% endif %}
             <br>
             {% endfor %}
             {% if current_user.invite_codes.count() < 5 %}
@@ -60,7 +64,7 @@
 {% include '_posts.html' %}
 {% if pagination %}
 <div class="pagination">
-    {{ macros.pagination_widget(pagination, '.profile', username=user.username) }}
+    {{ macros.pagination_widget(pagination, 'main.profile', username=user.username) }}
 </div>
 {% endif %}
 {% endblock %}

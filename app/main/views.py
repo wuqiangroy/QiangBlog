@@ -164,7 +164,7 @@ def post_page(id):
     form = CommentForm()
     if form.validate_on_submit():
         comment = Comment(
-            body=form.body.data,
+            text=form.body.data,
             post=post,
             author=current_user._get_current_object()
         )
@@ -181,7 +181,7 @@ def post_page(id):
         page, per_page=BaseConfig.COMMENT_PER_PAGE, error_out=False
     )
     comments = pagination.items
-    return render_template("post_page.html", post=[post], form=form,
+    return render_template("post_page.html", post=post, form=form,
                            comments=comments, pagination=pagination)
 
 
