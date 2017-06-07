@@ -12,7 +12,7 @@
     <form class="form" method="POST">
     {{ form.hidden_tag() }}
     {{ wtf.form_field(form.username, class="form-control user-icon") }}
-    {{ wtf.form_field(form.password) }}
+    {{ wtf.form_field(form.password, class="form-control password-icon") }}
     {{ wtf.form_field(form.submit) }}
     </form>
     <br>
