@@ -148,7 +148,7 @@ class User(UserMixin, db.Model):
 
         f = self.followed.filter_by(followed_id=user.id).first()
         if f:
-            db.session.add(f)
+            db.session.delete(f)
             db.session.commit()
 
     def is_following(self, user):

@@ -30,6 +30,10 @@
                 <li><a href="{{ url_for('main.profile', username=current_user.username) }}">
                     <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;个人资料</a> </li>
                 {% endif %}
+                {% if current_user.can(Permission.ADMINISTER) %}
+                <li><a href="{{ url_for('main.all_users') }}">
+                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;所有用户</a> </li>
+                {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}

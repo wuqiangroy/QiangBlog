@@ -45,6 +45,7 @@
             {% endif %}
         </p>
         <p>
+        {% if current_user == user.username %}
             <p><h4>邀请码:</h4></p>
             {% for invite_code in invite_codes %}
                 {% if User.query.filter_by(invite_code=invite_code.invite_code).first() %}
@@ -57,6 +58,7 @@
             {% if current_user.invite_codes.count() < 5 or current_user.can(Permission.ADMINISTER) %}
             <a href="{{ url_for('main.generate_invite_code')}}"><span class="btn btn-primary">生成邀请码</span></a>
             {% endif %}
+        {% endif %}
         </p>
     </div>
 </div>

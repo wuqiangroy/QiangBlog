@@ -67,6 +67,21 @@ def profile(username):
                            pagination=pagination, invite_codes=invite_codes)
 
 
+@main.route("/all_users")
+@login_required
+@permission_required(Permission.ADMINISTER)
+def all_users():
+    """所有用户"""
+
+    page = request.args.get("page", 1, type=int)
+    pagination = User.query.order_by(User.register_time.desc()).paginate(
+        page, per_page=BaseConfig.USERS_PER_PAGE, error_out=False
+    )
+    items = [item for item in pagination.items]
+    return render_template("all_users.html", endpoint="main.all_users",
+                           pagination=pagination, items=items)
+
+
 @main.route("/edit/profile", methods=["GET", "POST"])
 @login_required
 def edit_profile():

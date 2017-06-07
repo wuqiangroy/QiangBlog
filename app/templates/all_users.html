@@ -1,0 +1,41 @@
+{% extends "base.html"%}
+
+{% import "_macros.html" as macros %}
+
+{% block titile %}Qiang - All Users{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>所有用户</h1>
+</div>
+<table class="table table-hover followers">
+    <thead>
+    <tr>
+        <th><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;用户</th>
+        <th><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;邮箱</th>
+        <th><span class="glyphicon glyphicon-time" aria-hidden="true"></span>&nbsp;注册时间</th>
+    </tr>
+    </thead>
+    {% for item in items %}
+    <tr>
+        <td>
+            <a href="{{ url_for('main.profile', username=item.username) }}">
+                <img class="img-rounded" src="{{ item.gravatar(size=32) }}">
+                {{ item.username }}
+            </a>
+        </td>
+        <td>
+            <a href="mailto:{{ item.email }}">{{ item.email }}</a>
+        </td>
+        <td>
+            {{ moment(item.register_time).format("L") }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, "main.all_users") }}
+</div>
+{% endif %}
+{% endblock %}
