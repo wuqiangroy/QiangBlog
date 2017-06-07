@@ -8,7 +8,10 @@
     <h1>{{ user.username }} {{ title }}</h1>
 </div>
 <table class="table table-hover followers">
-    <thead><tr><th>用户名</th><th>关注时间</th></tr></thead>
+    <thead><tr>
+        <th><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;用户名</th>
+        <th><span class="glyphicon glyphicon-time" aria-hidden="true"></span>&nbsp;关注时间</th>
+    </tr></thead>
     {% for follow in follows %}
     {% if follow.user != user %}
     <tr>

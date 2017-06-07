@@ -12,15 +12,23 @@
         <p>
             {% if user.realname %}{{ user.realname }}<br>{% endif %}
             {% if user.location %}
-                来自 <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a><br>
+                <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>&nbsp; <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a><br>
             {% endif %}
         </p>
         {% endif %}
         {% if current_user.is_administrator() %}
-        <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+        <p>
+            <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;
+            <a href="mailto:{{ user.email }}">{{ user.email }}</a>
+        </p>
         {% endif %}
-        {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
-        <p>注册时间：{{ moment(user.register_time).format('L') }}，最后一次登录：{{ moment(user.last_seen).format("LLL") }}.</p>
+        {% if user.about_me %}
+            <p>
+            <span class="glyphicon glyphicon-align-right" aria-hidden="true"></span>&nbsp;
+                {{ user.about_me }}
+            </p>
+        {% endif %}
+        <p>注册时间：&nbsp;{{ moment(user.register_time).format('L') }}，最后一次登录：&nbsp;{{ moment(user.last_seen).format("LLL") }}.</p>
         <p>{{ user.posts.count() }} 篇文章. {{ user.comments.count() }} 评论.</p>
         <p>
             {% if current_user.can(Permission.FOLLOW) and user != current_user %}
