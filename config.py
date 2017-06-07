@@ -26,6 +26,7 @@ class BaseConfig:
     COMMENT_PER_PAGE = 20
     FOLLOWER_PER_PAGE = 20
     FOLLOWED_PER_PAGE = 20
+    USERS_PER_PAGE = 50
     BOOTSTRAP_SERVE_LOCAL = True
 
     @staticmethod

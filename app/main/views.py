@@ -303,7 +303,7 @@ def unfollow(username):
         flash("没有此用户")
         return redirect(url_for("main.index"))
     if not current_user.is_following(user):
-        flash("你还没有关注这个用户了")
+        flash("你还没有关注这个用户")
         return redirect(url_for("main.profile", username=username))
     current_user.unfollow(user)
     flash("取消关注{}成功".format(username))
