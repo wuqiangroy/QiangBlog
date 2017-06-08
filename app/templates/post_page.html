@@ -10,12 +10,13 @@
         <div class="page-header" >
             <h1 style="text-align: center">{{ post.title }}</h1>
         </div>
-        <div style="text-align: center">
+        <div style="text-align: center; color: grey" >
             作者：
             <a href="{{ url_for('main.profile', username=post.author.username) }}">
                 <img class="img-rounded" src="{{ post.author.gravatar(size=40) }}">
             </a>
-            <a href="{{ url_for('main.profile', username=post.author) }}">{{ post.author.username }}</a>
+            <a href="{{ url_for('main.profile', username=post.author.username) }}">
+                {{ post.author.username }}</a>
             &emsp;&emsp;发布时间： {{ moment(post.create_time).format("LLL") }}
         </div>
 
@@ -24,36 +25,43 @@
         </div>
         <br>
         <br>
-        <div class="post-body">
+        <div class="post-body" style="padding-left: 125px; padding-right: 125px; font-size: medium" >
             {% if post.content_html %}
             {{ post.content_html | safe }}
             {% else %}
-            {{ post.content }}
+            {{ post.content | safe }}
             {% endif %}
         </div>
         <br>
         <br>
         <div class="post-footer">
             {% if current_user == post.author %}
-            <a href="{{ url_for('main.edit_post', id=post.id )}}">
-                <span class="label label-primary">编辑</span>
+            <a href="{{ url_for('main.edit_post', id=post.id )}}" style="color: grey">
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;
+                编辑
             </a>
-            <a href="{{ url_for('main.delete_post', id=post.id )}}">
-                <span class="label label-danger">删除</span>
+                &nbsp;&nbsp;
+            <a href="{{ url_for('main.delete_post', id=post.id )}}" style="color: #902b2b">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true" ></span>&nbsp;
+                删除
             </a>
             {% elif current_user.can(Permission.ADMINISTER) %}
-            <a href="{{ url_for('main.edit_post', id=post.id )}}">
-                <span class="label label-danger">编辑[管理员]</span>
+            <a href="{{ url_for('main.edit_post', id=post.id )}}" style="color: grey">
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;
+                编辑[管理员]
             </a>
-            <a href="{{ url_for('main.delete_post', id=post.id )}}">
-                <span class="label label-danger">删除[管理员]</span>
+            <a href="{{ url_for('main.delete_post', id=post.id )}}" style="color: #902b2b">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true" ></span>&nbsp;
+                删除[管理员]
             </a>
             {% endif %}
         </div>
     </ul>
 </div>
 <hr/>
-<h4 id="comments">评论</h4>
+<h2 id="comments" style="font-weight: 700; padding-left: 30px">
+    评论&nbsp;<span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+</h2>
 {% include '_comments.html' %}
 {% if pagination %}
 <div class="pagination">

@@ -10,7 +10,12 @@
         <h1>{{ user.username }}</h1>
         {% if user.realname or user.location %}
         <p>
-            {% if user.realname %}{{ user.realname }}<br>{% endif %}
+            {% if user.realname %}
+                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;
+                {{ user.realname }}<br>
+            {% endif %}
+        </p>
+            <p>
             {% if user.location %}
                 <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>&nbsp; <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a><br>
             {% endif %}
@@ -29,7 +34,7 @@
             </p>
         {% endif %}
         <p>注册时间：&nbsp;{{ moment(user.register_time).format('L') }}，最后一次登录：&nbsp;{{ moment(user.last_seen).format("LLL") }}.</p>
-        <p>{{ user.posts.count() }} 篇文章. {{ user.comments.count() }} 评论.</p>
+        <p>{{ user.posts.count() }} 篇文章. {{ user.comments.count() }} 条评论.</p>
         <p>
             {% if current_user.can(Permission.FOLLOW) and user != current_user %}
                 {% if not current_user.is_following(user) %}
@@ -53,17 +58,18 @@
             {% endif %}
         </p>
         <p>
-        {% if current_user == user.username %}
-            <p><h4>邀请码:</h4></p>
+        {% if current_user.username == user.username %}
+            <p><h4>邀请码<span class="glyphicon glyphicon-grain" aria-hidden="true"></span>:</h4></p>
             {% for invite_code in invite_codes %}
                 {% if User.query.filter_by(invite_code=invite_code.invite_code).first() %}
-                <del>{{ invite_code.invite_code }}</del>&emsp;&emsp;已使用
+                    <span style="display: inline-block;width: 300px;"><del>{{ invite_code.invite_code }}</del>&emsp;&emsp;</span>已使用
                 {% else %}
-                {{ invite_code.invite_code }}&emsp;&emsp;未使用
+                    <span style="display: inline-block;width: 300px;">{{ invite_code.invite_code }}</span>未使用
                 {% endif %}
             <br>
             {% endfor %}
             {% if current_user.invite_codes.count() < 5 or current_user.can(Permission.ADMINISTER) %}
+                <br>
             <a href="{{ url_for('main.generate_invite_code')}}"><span class="btn btn-primary">生成邀请码</span></a>
             {% endif %}
         {% endif %}

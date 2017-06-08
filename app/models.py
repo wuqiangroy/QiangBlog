@@ -283,16 +283,16 @@ class Post(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     comments = db.relationship("Comment", backref="post", lazy="dynamic")
 
-    @staticmethod
-    def change_body(target, value, oldvalue, initiator):
-        allowed_tags = ["a", "abbr", "acronym", "b", "blockquote", "code",
-                        "em", "i", "li", "ol", "pre", "strong", "ul",
-                        "h1", "h2", "h3", "p"]
-        target.text_html = bleach.linkify(bleach.clean(
-            markdown(value, output_format="html"),
-            tags=allowed_tags, strip=True))
+    # @staticmethod
+    # def change_body(target, value, oldvalue, initiator):
+    #     allowed_tags = ["a", "abbr", "acronym", "b", "blockquote", "code",
+    #                     "em", "i", "li", "ol", "pre", "strong", "ul",
+    #                     "h1", "h2", "h3", "p"]
+    #     target.text_html = bleach.linkify(bleach.clean(
+    #         markdown(value, output_format="html"),
+    #         tags=allowed_tags, strip=True))
 
-db.event.listen(Post.content, "set", Post.change_body)
+# db.event.listen(Post.content, "set", Post.change_body)
 
 
 class Comment(db.Model):
@@ -308,16 +308,16 @@ class Comment(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey("posts.id"))
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
-    @staticmethod
-    def change_body(target, value, oldvalue, initiator):
-        allowed_tags = ["a", "abbr", "acronym", "b", "blockquote", "code",
-                        "em", "i", "li", "ol", "pre", "strong", "ul",
-                        "h1", "h2", "h3", "p"]
-        target.text_html = bleach.linkify(bleach.clean(
-            markdown(value, output_format="html"),
-            tags=allowed_tags, strip=True))
-
-db.event.listen(Comment.text, "set", Comment.change_body)
+#     @staticmethod
+#     def change_body(target, value, oldvalue, initiator):
+#         allowed_tags = ["a", "abbr", "acronym", "b", "blockquote", "code",
+#                         "em", "i", "li", "ol", "pre", "strong", "ul",
+#                         "h1", "h2", "h3", "p"]
+#         target.text_html = bleach.linkify(bleach.clean(
+#             markdown(value, output_format="html"),
+#             tags=allowed_tags, strip=True))
+#
+# db.event.listen(Comment.text, "set", Comment.change_body)
 
 
 class InviteCode(db.Model):
