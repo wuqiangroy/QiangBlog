@@ -255,7 +255,11 @@ def delete_post(id):
     db.session.delete(post)
     db.session.commit()
     flash("文章《{}》已删除".format(title))
-    return redirect(url_for("main.index"))
+    if "post" in request.referrer:
+        return redirect(url_for("main.index"))
+    else:
+        return redirect(request.referrer)
+    return redirect(request.referrer) or redirect(url_for("main.index"))
 
 
 @main.route("/delete/comment/<int:id>")
