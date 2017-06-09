@@ -16,10 +16,10 @@ class BaseConfig:
     SQLALCHEMY_RECORD_QUERIES = True
     SLOW_DB_QUERY_TIME = 0.5
     MAIL_SUBJECT_PREFIX = "[QiangBlog]"
-    MAIL_SENDER = "QiangBlog <wuqiangroy@yeah.net>"
-    MAIL_SERVER = "smtp.yeah.net"
-    MAIL_USE_SSL = True
-    MAIL_USERNAME = "wuqiangroy@yeah.net"
+    MAIL_SENDER = "QiangBlog <admin@wuqiangroy.cn>"
+    MAIL_SERVER = "smtp.mailgun.com"
+    MAIL_PORT = 587
+    MAIL_USERNAME = "admin@wuqiangroy.cn"
     MAIL_PASSWORD = os.environ.get("password")
     MAIL_ADMIN = os.environ.get("MAIL_ADMIN") or "wuqiangroy@live.com"
     POST_PER_PAGE = 20
