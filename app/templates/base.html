@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block navbar %}
-<div class="navbar navbar-inverse" role="navigation">
+<div class="navbar navbar-default" role="navigation" style="position: fixed; width: 100%">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -20,7 +20,9 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">QiangBlog</a>
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">
+                QiangBlog
+            </a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
@@ -37,6 +39,10 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
+                    <ul class="nav navbar-nav">
+                <li><a href="{{ url_for('main.moderate')}}">
+                    <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>&nbsp;管理评论</a> </li>
+                    </ul>
                 <ul class="nav navbar-nav">
                 <li><a href="{{ url_for('main.write_post')}}">
                     <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>&nbsp;发布文章</a> </li>
@@ -50,7 +56,7 @@
                         <li><a href="{{url_for('auth.change_password')}}">
                             <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>&nbsp;修改密码</a> </li>
                         <li><a href="{{url_for('auth.change_email_request')}}">
-                            <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;修改邮箱</a> </li>
+                            <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;更换邮箱</a> </li>
                         <li><a href="{{url_for('auth.logout')}}">
                             <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;退出</a> </li>
                     </ul>
@@ -66,7 +72,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container" style="padding-top: 55px">
     {% for message in get_flashed_messages() %}
     <div class="alert alert-warning">
         <button type="button" class="close" data-dismiss="alert">&times;</button>

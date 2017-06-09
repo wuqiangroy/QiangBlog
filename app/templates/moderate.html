@@ -3,12 +3,11 @@
 
 {% block title %}QiangBLog - Comment Moderator {% endblock %}
 
-{% block page_conent %}
+{% block page_content %}
 <div class="page-header">
     <h1>管理所有评论</h1>
 </div>
-{% set moderator = True %}
-{% inclue "_comments.html" %}
+{% include "_comments.html" %}
 {% if pagination %}
 <div class="pagination">
     {{ macros.pagination_widget(pagination, "main.moderate") }}

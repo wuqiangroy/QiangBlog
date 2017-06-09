@@ -3,7 +3,7 @@
 
 import uuid
 from flask import current_app, render_template, flash, redirect, url_for, \
-    abort, request
+    abort, request, make_response
 from flask_login import login_required, current_user
 from flask_sqlalchemy import get_debug_queries
 
@@ -52,7 +52,6 @@ def index():
 
 
 @main.route("/profile/<username>", methods=["GET", "POST"])
-@login_required
 def profile(username):
     """个人资料页"""
 
@@ -259,7 +258,6 @@ def delete_post(id):
         return redirect(url_for("main.index"))
     else:
         return redirect(request.referrer)
-    return redirect(request.referrer) or redirect(url_for("main.index"))
 
 
 @main.route("/delete/comment/<int:id>")
@@ -268,14 +266,13 @@ def delete_comment(id):
     """删除评论"""
 
     comment = Comment.query.get_or_404(id)
-    post_id = comment.post_id
     if current_user != comment.author and \
-            not current_user.can(Permission.ADMINISTER):
+            not current_user.can(Permission.EDIT_COMMENT):
         abort(403)
     db.session.delete(comment)
     db.session.commit()
     flash("评论已删除")
-    return redirect(url_for("main.post_page", id=post_id))
+    return redirect(request.referrer)
 
 
 @main.route("/follow/<username>")
@@ -362,20 +359,26 @@ def followed_by(username):
 
 @main.route("/moderate")
 @login_required
-@permission_required(Permission.EDIT_COMMENT)
 def moderate():
     """所有评论管理"""
-
-    page = request.args.get("page", 1, type=int)
-    pagination = Comment.query.order_by(Comment.create_time.desc()).paginate(
-        page, per_page=BaseConfig.COMMENT_PER_PAGE, error_out=False
-    )
-    comments = pagination.items
-    return render_template("moderator.html", comments=comments,
+    if current_user.can(Permission.EDIT_COMMENT):
+        page = request.args.get("page", 1, type=int)
+        pagination = Comment.query.order_by(Comment.create_time.desc()).paginate(
+            page, per_page=BaseConfig.COMMENT_PER_PAGE, error_out=False
+        )
+        comments = pagination.items
+    else:
+        user = User.query.filter_by(username=current_user.username).first()
+        page = request.args.get("page", 1, type=int)
+        pagination = user.comments.order_by(Comment.create_time.desc()).paginate(
+            page, per_page=BaseConfig.COMMENT_PER_PAGE, error_out=False
+        )
+        comments = pagination.items
+    return render_template("moderate.html", comments=comments,
                            pagination=pagination, page=page)
 
 
-@main.route("/moderator/enable/<int:id>")
+@main.route("/moderate/enable/<int:id>")
 @login_required
 @permission_required(Permission.EDIT_COMMENT)
 def moderate_enable(id):
@@ -385,11 +388,10 @@ def moderate_enable(id):
     comment.disable = False
     db.session.add(comment)
     db.session.commit()
-    return render_template(url_for("main.moderate",
-                                   page=request.args.get("page", 1, type=int)))
+    return redirect(request.referrer)
 
 
-@main.route("/moderator/disable/<int:id>")
+@main.route("/moderate/disable/<int:id>")
 @login_required
 @permission_required(Permission.EDIT_COMMENT)
 def moderate_disable(id):
@@ -399,8 +401,7 @@ def moderate_disable(id):
     comment.disable = True
     db.session.add(comment)
     db.session.commit()
-    return redirect(url_for("main.moderate",
-                            page=request.args.get("page", 1, type=int)))
+    return redirect(request.referrer)
 
 
 @main.route("/generate/invite_code")
@@ -426,3 +427,19 @@ def generate_invite_code():
         return redirect(url_for("main.profile",
                                 username=current_user.username))
     return redirect(url_for("main.profile", username=current_user.username))
+
+
+@main.route("/all")
+@login_required
+def show_all():
+    resp = make_response(redirect(url_for(".index")))
+    resp.set_cookie("show_followed", "", max_age=30*24*60*60)
+    return resp
+
+
+@main.route("/followed")
+@login_required
+def show_followed():
+    resp = make_response(redirect(url_for(".index")))
+    resp.set_cookie("show_followed", "", max_age=30*24*60*60)
+    return resp
