@@ -135,7 +135,7 @@ def edit_profile_admin(username):
         user.about_me = form.about_me.data
         db.session.add(user)
         db.session.commit()
-        flash("改用户资料已更新")
+        flash("该用户资料已更新")
         return redirect(url_for("main.profile", username=username))
     form.username.data = user.username
     form.email.data = user.email
@@ -361,8 +361,11 @@ def followed_by(username):
 @login_required
 def moderate():
     """所有评论管理"""
+    show_all = False
     if current_user.can(Permission.EDIT_COMMENT):
-        page = request.args.get("page", 1, type=int)
+        show_all = bool(request.cookies.get("show_all_comments", ""))
+    page = request.args.get("page", 1, type=int)
+    if show_all:
         pagination = Comment.query.order_by(Comment.create_time.desc()).paginate(
             page, per_page=BaseConfig.COMMENT_PER_PAGE, error_out=False
         )
@@ -375,7 +378,8 @@ def moderate():
         )
         comments = pagination.items
     return render_template("moderate.html", comments=comments,
-                           pagination=pagination, page=page)
+                           show_all=show_all, pagination=pagination,
+                           page=page)
 
 
 @main.route("/moderate/enable/<int:id>")
@@ -432,6 +436,8 @@ def generate_invite_code():
 @main.route("/all")
 @login_required
 def show_all():
+    """文章显示全部"""
+
     resp = make_response(redirect(url_for(".index")))
     resp.set_cookie("show_followed", "", max_age=30*24*60*60)
     return resp
@@ -440,6 +446,28 @@ def show_all():
 @main.route("/followed")
 @login_required
 def show_followed():
+    """只显示关注者文章"""
+
     resp = make_response(redirect(url_for(".index")))
-    resp.set_cookie("show_followed", "", max_age=30*24*60*60)
+    resp.set_cookie("show_followed", "1", max_age=30*24*60*60)
+    return resp
+
+
+@main.route("/self")
+@login_required
+def show_self():
+    """只显示自己评论"""
+
+    resp = make_response(redirect(url_for("main.moderate")))
+    resp.set_cookie("show_all_comments", "", max_age=30*24*60*60)
+    return resp
+
+
+@main.route("/all_comments")
+@login_required
+def show_all_comments():
+    """显示所有评论"""
+
+    resp = make_response(redirect(url_for("main.moderate")))
+    resp.set_cookie("show_all_comments", "1", max_age=30*24*60*60)
     return resp

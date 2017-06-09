@@ -5,12 +5,27 @@
 
 {% block page_content %}
 <div class="page-header">
-    <h1>管理所有评论</h1>
+    <h1><img src="/static/pic/moderate_comment.png" style="width: 60px; height: 60px"> 所有评论</h1>
 </div>
+<div class="post-tabs">
+<ul class="nav nav-tabs">
+    <li{% if not show_all %} class="active"{% endif %}>
+        <a href="{{ url_for("main.show_self") }}">我的评论</a> </li>
+    {% if current_user.can(Permission.EDIT_COMMENT) %}
+    <li{% if show_all %} class="active"{% endif %}>
+        <a href="{{ url_for("main.show_all_comments") }}">所有评论</a> </li>
+    {% endif %}
+</ul>
 {% include "_comments.html" %}
+</div>
 {% if pagination %}
 <div class="pagination">
     {{ macros.pagination_widget(pagination, "main.moderate") }}
 </div>
 {% endif %}
 {% endblock %}}
+
+{% block scripts %}
+{{ super() }}
+{{ pagedown.include_pagedown() }}
+{% endblock %}

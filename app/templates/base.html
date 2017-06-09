@@ -20,8 +20,8 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">
-                QiangBlog
+            <a class="navbar-brand" href="{{ url_for('main.index') }}" style="font-size: x-large">
+               QiangBlog
             </a>
         </div>
         <div class="navbar-collapse collapse">
@@ -41,7 +41,7 @@
                 {% if current_user.is_authenticated %}
                     <ul class="nav navbar-nav">
                 <li><a href="{{ url_for('main.moderate')}}">
-                    <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>&nbsp;管理评论</a> </li>
+                    <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>&nbsp;评论</a> </li>
                     </ul>
                 <ul class="nav navbar-nav">
                 <li><a href="{{ url_for('main.write_post')}}">
@@ -74,10 +74,22 @@
 {% block content %}
 <div class="container" style="padding-top: 55px">
     {% for message in get_flashed_messages() %}
+        {% if ("已验证" or "更新" or "已修改" or "成功" or "已删除" or "已生成") in message %}
+            <div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;{{ message }}
+    </div>
+        {% elif "access" in message %}
+        <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>&nbsp;请登录再访问！
+    </div>
+        {% else %}
     <div class="alert alert-warning">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
         <span class="glyphicon glyphicon-bell" aria-hidden="true"></span>&nbsp;{{ message }}
     </div>
+        {% endif %}
     {% endfor %}
 
     {% block page_content %}{% endblock %}
