@@ -38,7 +38,7 @@ class Development(BaseConfig):
     """开发配置"""
 
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = "postgresql://dbuser:wuqiang123@localhost/dev_qiangblog"
+    SQLALCHEMY_DATABASE_URI = "postgresql://dbuser:password@localhost/dev_qiangblog"
 
 
 class Production(BaseConfig):
