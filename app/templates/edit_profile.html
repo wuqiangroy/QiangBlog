@@ -4,10 +4,21 @@
 {% block title %}QiangBlog - Edit Profile{% endblock %}
 
 {% block page_content %}
-<div class="page-header" style="text-align: center">
-    <h1>编辑个人资料</h1>
+<div class="page-header">
+    <h1><img src="/static/pic/edit_profile.png" style="width: 80px; height: 80px;"> 编辑个人资料</h1>
 </div>
 <div class="col-md-4">
-    {{ wtf.quick_form(form) }}
+    <form class="form" method="POST">
+    {{ form.hidden_tag() }}
+    {{ wtf.form_field(form.realname, class="form-control name-icon") }}
+    {{ wtf.form_field(form.phone, class="form-control phone-icon") }}
+    {{ wtf.form_field(form.location, class="form-control location-icon") }}
+    {{ wtf.form_field(form.QQ, class="form-control qq-icon") }}
+    {{ wtf.form_field(form.wechat, class="form-control wechat-icon") }}
+    {{ wtf.form_field(form.weibo, class="form-control weibo-icon") }}
+    {{ wtf.form_field(form.about_me) }}
+    {{ wtf.form_field(form.submit) }}
+    </form>
+<br>
 </div>
 {% endblock %}

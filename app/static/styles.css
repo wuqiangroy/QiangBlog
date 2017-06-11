@@ -119,3 +119,52 @@ div.flask-pagedown-preview h3 {
     background-position-y: 3px;
     background-image:     url("password_login.png");
 }
+.email-icon {
+    padding-left:30px;
+    background-repeat: no-repeat;
+    background-position-x: 3px;
+    background-position-y: 3px;
+    background-image:     url("email.png");
+}
+.name-icon {
+    padding-left:30px;
+    background-repeat: no-repeat;
+    background-position-x: 3px;
+    background-position-y: 3px;
+    background-image:     url("name.png");
+}
+.phone-icon {
+    padding-left:30px;
+    background-repeat: no-repeat;
+    background-position-x: 3px;
+    background-position-y: 3px;
+    background-image:     url("phone.png");
+}
+.qq-icon {
+    padding-left:30px;
+    background-repeat: no-repeat;
+    background-position-x: 3px;
+    background-position-y: 3px;
+    background-image:     url("qq.png");
+}
+.wechat-icon {
+    padding-left:30px;
+    background-repeat: no-repeat;
+    background-position-x: 3px;
+    background-position-y: 3px;
+    background-image:     url("wechat.png");
+}
+.weibo-icon {
+    padding-left:30px;
+    background-repeat: no-repeat;
+    background-position-x: 3px;
+    background-position-y: 3px;
+    background-image:     url("weibo.png");
+}
+.location-icon {
+    padding-left:30px;
+    background-repeat: no-repeat;
+    background-position-x: 3px;
+    background-position-y: 3px;
+    background-image:     url("location.png");
+}

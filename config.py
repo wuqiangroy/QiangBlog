@@ -17,9 +17,9 @@ class BaseConfig:
     SLOW_DB_QUERY_TIME = 0.5
     MAIL_SUBJECT_PREFIX = "[QiangBlog]"
     MAIL_SENDER = "QiangBlog <admin@wuqiangroy.cn>"
-    MAIL_SERVER = "smtp.mailgun.com"
-    MAIL_PORT = 587
-    MAIL_USERNAME = "admin@wuqiangroy.cn"
+    MAIL_SERVER = "smtp.sendcloud.net"
+    MAIL_PORT = 25
+    MAIL_USERNAME = "qiangblog"
     MAIL_PASSWORD = os.environ.get("password")
     MAIL_ADMIN = os.environ.get("MAIL_ADMIN") or "wuqiangroy@live.com"
     POST_PER_PAGE = 20
@@ -38,7 +38,7 @@ class Development(BaseConfig):
     """开发配置"""
 
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = "postgresql://dbuser:password@localhost/dev_qiangblog"
+    SQLALCHEMY_DATABASE_URI = "postgresql://dbuser:wuqiang123@localhost/dev_qiangblog"
 
 
 class Production(BaseConfig):

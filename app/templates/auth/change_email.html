@@ -7,9 +7,15 @@
 {% block page_content %}
 <div class="page-header">
     <h1><img src="/static/pic/mail.png" style="width: 80px; height: 80px;"> 更换邮箱</h1>
+<div><h3 style="padding-left: 10px">当前邮箱为：{{ current_user.email }}</h3></div>
 </div>
 <div class="col-md-4">
-    {{ wtf.quick_form(form) }}
+    <form class="form" method="POST">
+    {{ form.hidden_tag() }}
+    {{ wtf.form_field(form.password, class="form-control password-icon") }}
+    {{ wtf.form_field(form.email, class="form-control email-icon") }}
+    {{ wtf.form_field(form.submit) }}
+    </form>
     <br>
 </div>
 {% endblock %}
