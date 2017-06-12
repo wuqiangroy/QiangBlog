@@ -64,6 +64,8 @@
                 {% else %}
                 <li><a href="{{ url_for('auth.login') }}">
                     <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp;登录</a> </li>
+                    <li><a href="{{ url_for('auth.register') }}">
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;注册</a></li>
                 {% endif %}
             </ul>
         </div>
